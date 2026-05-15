@@ -35,22 +35,25 @@
   --color-backgroundTertiary: #dee2da;
 
   --color-contentPrimary: #0b1a12;
-  --color-contentSecondary: #2c5a41;
-  --color-contentTertiary: #c8878c;
+  --color-contentSecondary: #5a5e56;
+  --color-contentTertiary: #2c5a41;
   --color-contentInverted: #ffffff;
 
   --color-accentBase: #88b77e;
   --color-accentLight: #dbebd5;
+  --color-accentDark: #4d8b43;
+  --color-accentMuted: #d8ded4;
 
   --color-borderPrimary: #8dae94;
-  --color-borderSecondary: #4e584a;
+  --color-borderSecondary: #c3c8bc;
+  --color-borderLight: #a2cd9f;
 
   --color-contentError: #dc2626;
   --color-contentDesctructive: #dc2626;
 }
 
 .custom-shadow {
-  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.8);
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.5);
 }
 
 @theme inline {

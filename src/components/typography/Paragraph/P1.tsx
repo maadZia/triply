@@ -1,4 +1,4 @@
-import { cn } from '@/_frontend/utils'
+import { cn } from '@/components/utils'
 import React from 'react'
 
 export function P1({ className, ...props }: React.ComponentPropsWithoutRef<'p'>) {

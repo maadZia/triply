@@ -1,4 +1,4 @@
-import { cn } from '@/_frontend/utils'
+import { cn } from '@/components/utils'
 import * as Headless from '@headlessui/react'
 import { Link as RouterLink, type LinkProps } from 'react-router-dom'
 import { forwardRef } from 'react'

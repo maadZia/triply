@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router-dom'
-import { Link } from "@/_components/atoms/Link"
+import { Link } from "@/components/atoms/Link"
 import { NavbarItem } from './NavbarItem'
 import { NAVBAR_LINKS } from './navbarLinks'
 

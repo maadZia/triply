@@ -1,4 +1,4 @@
-import { cn } from '@/_frontend/utils'
+import { cn } from '@/components/utils'
 import type React from 'react'
 import { forwardRef } from 'react'
 import { Link, type LinkProps } from 'react-router-dom'
@@ -16,8 +16,8 @@ export const NavbarItem = forwardRef<HTMLAnchorElement, NavbarItemProps>(
       'relative flex min-w-0 items-center gap-3 rounded-lg text-center text-base transition-colors',
       // active / inactive colors
       current
-        ? 'font-semibold text-contentSecondary'
-        : 'font-light text-contentPrimary',
+        ? 'font-semibold text-contentPrimary'
+        : 'font-light text-contentSecondary',
       className
     )
 
