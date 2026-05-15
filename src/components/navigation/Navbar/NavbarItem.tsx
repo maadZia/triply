@@ -16,8 +16,8 @@ export const NavbarItem = forwardRef<HTMLAnchorElement, NavbarItemProps>(
       'relative flex min-w-0 items-center gap-3 rounded-lg text-center text-base transition-colors',
       // active / inactive colors
       current
-        ? 'font-semibold text-contentPrimary'
-        : 'font-light text-contentSecondary',
+        ? 'font-semibold text-contentPrimary px-0'
+        : 'font-normal text-contentSecondary px-1',
       className
     )
 
