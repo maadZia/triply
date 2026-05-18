@@ -2,6 +2,7 @@ import { FilterCard } from "@/frontend/Home/FilterCard";
 import { H2 } from "@/components/typography/Heading";
 import { PlaceCardHorizontal } from "@/components/cards/PlaceCard/PlaceCardHorizontal";
 import { Button } from "@/components/atoms/Button";
+import { HeartButton, BookmarkButton } from "@/components/atoms/icons";
 
 export default function HomePage() {
   return (
@@ -18,6 +19,12 @@ export default function HomePage() {
               title="Zamek królewski na Wawelu"
               description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
               img="./wawel.png"
+              actionButtons={
+                <>
+                  <HeartButton defaultLiked={false} />
+                  <BookmarkButton defaultLiked={false} />
+                </>
+              }
             />
           ))}
         </div>

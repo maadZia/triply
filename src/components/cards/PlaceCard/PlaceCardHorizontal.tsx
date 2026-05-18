@@ -1,43 +1,42 @@
-import { LightCard } from "../LightCard"
-import { HeartButton, BookmarkButton } from "@/components/atoms/icons"
-import { P1, P3 } from "@/components/typography/Paragraph"
+import { LightCard } from "../LightCard";
+import { P1, P3 } from "@/components/typography/Paragraph";
 import { Button } from "@/components/atoms/Button";
 
 type PlaceCardHorizontalProps = {
   title: string;
   description: string;
   img: string;
+  actionButtons?: React.ReactNode;
 };
 
 export function PlaceCardHorizontal({
   title,
   description,
   img,
+  actionButtons,
 }: PlaceCardHorizontalProps) {
   return (
     <LightCard className="flex gap-4 items-start p-4">
-      <div className="w-80 aspect-square rounded-lg overflow-hidden">
-        <img
-          src={img}
-          alt={title}
-          className="w-full h-full object-cover"
-        />
+      {/* IMAGE */}
+      <div className="w-32 h-32 shrink-0 rounded-lg overflow-hidden">
+        <img src={img} alt={title} className="w-full h-full object-cover" />
       </div>
 
-      <section className="space-y-2">
-        <header className="flex items-center justify-between gap-x-1">
-          <P1 className="font-semibold">{title}</P1>
+      {/* CONTENT */}
+      <div className="flex flex-col flex-1 space-y-2 min-w-0 min-h-32">
+        <section className="space-y-2">
+          <header className="flex items-start justify-between gap-x-1">
+            <P1 className="font-semibold">{title}</P1>
+            <div className="flex gap-1">{actionButtons}</div>
+          </header>
 
-          <div className="flex gap-1">
-            <HeartButton defaultLiked={false} />
-            <BookmarkButton defaultLiked={false} />
-          </div>
-        </header>
+          <P3>{description}</P3>
+        </section>
 
-        <P3>{description}</P3>
-
-        <Button plain>Pokaż szczegóły</Button>
-      </section>
+        <Button className="mt-auto self-start" plain>
+          Pokaż szczegóły
+        </Button>
+      </div>
     </LightCard>
-  )
+  );
 }
