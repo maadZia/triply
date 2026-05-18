@@ -11,7 +11,7 @@ export default function HomePage() {
       <div className="w-2/5 flex flex-col gap-6 items-center">
         <H2 className="w-full text-left">Podpowiedzi</H2>
 
-        <div className="space-y-4">
+        <div className="space-y-4 w-full">
           {new Array(3).fill(0).map((_, index) => (
             <PlaceCardHorizontal
               key={index}

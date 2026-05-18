@@ -4,6 +4,7 @@ import HomePage from "./pages/HomePage";
 import ExplorePage from "./pages/ExplorePage";
 import SchedulePage from "./pages/SchedulePage";
 import ProfilePage from "./pages/Profile";
+import LoginPage from "./pages/LoginPage";
 
 function App() {
   return (
@@ -14,9 +15,10 @@ function App() {
           <Route path="/explore" element={<ExplorePage />} />
           <Route path="/schedule" element={<SchedulePage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/login" element={<LoginPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
-  )
+  );
 }
-export default App
+export default App;
