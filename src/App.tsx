@@ -1,10 +1,11 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainLayout from "./layout";
-import HomePage from "./pages/HomePage";
-import ExplorePage from "./pages/ExplorePage";
-import SchedulePage from "./pages/SchedulePage";
-import ProfilePage from "./pages/Profile";
-import LoginPage from "./pages/LoginPage";
+import HomePage from "./features/home/HomePage";
+import ExplorePage from "./features/explore/ExplorePage";
+import SchedulePage from "./features/schedule/SchedulePage";
+import ProfilePage from "./features/profile/Profile";
+import LoginPage from "./features/auth/screens/LoginPage";
+import RegisterPage from "./features/auth/screens/RegisterPage";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/schedule" element={<SchedulePage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -1,4 +1,4 @@
-import { FilterCard } from "@/frontend/Home/FilterCard";
+import { FilterCard } from "@/features/home/components/FilterCard";
 import { H2 } from "@/components/typography/Heading";
 import { PlaceCardHorizontal } from "@/components/cards/PlaceCard/PlaceCardHorizontal";
 import { Button } from "@/components/atoms/Button";
