@@ -11,7 +11,7 @@ export const DarkCard = ({
   return (
     <div
       className={cn(
-        'bg-backgroundSecondary border border-borderPrimary h-fit flex-1 space-y-4 rounded-xl p-6 shadow-md',
+        'bg-backgroundSecondary border border-borderPrimary h-fit flex-1 rounded-xl p-6 shadow-md',
         className
       )}
       {...props}

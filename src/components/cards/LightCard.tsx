@@ -11,7 +11,7 @@ export const LightCard = ({
   return (
     <div
       className={cn(
-        'bg-white border border-borderSecondary h-fit flex-1 space-y-4 rounded-xl p-6 shadow-md',
+        'bg-white border border-borderSecondary h-fit flex-1 rounded-xl p-6 shadow-md',
         className
       )}
       {...props}

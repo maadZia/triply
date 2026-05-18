@@ -11,18 +11,18 @@ import { Switch } from "@/components/forms/Switch"
 
 export function FilterCard() {
   return (
-    <DarkCard className="w-3/5">
-        <header className="space-y-2">
-          <H1>Generator planu</H1>
-          <P1 className="text-contentSecondary">
-            Zdefiniuj swój wymarzony dzień. Nasz algorytm przygotuje dla Ciebie
-            spersonalizowany plan zwiedzania w kilka sekund.
-          </P1>
-        </header>
+    <DarkCard className="w-3/5 space-y-4">
+      <header className="space-y-2">
+        <H1>Generator planu</H1>
+        <P1 className="text-contentSecondary">
+          Zdefiniuj swój wymarzony dzień. Nasz algorytm przygotuje dla Ciebie
+          spersonalizowany plan zwiedzania w kilka sekund.
+        </P1>
+      </header>
 
-        <Divider />
+      <Divider />
 
-        <H2 className="text-contentTertiary">Filtry</H2>
+      <H2 className="text-contentTertiary">Filtry</H2>
 
         <Fieldset>
           <Field>
