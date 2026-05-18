@@ -7,7 +7,7 @@ import { Button } from "@/components/atoms/Button";
 export function NavbarDesktop() {
   const { pathname } = useLocation();
 
-  const isLoggedIn = false;
+  const isLoggedIn = true;
 
   const links = isLoggedIn ? NAVBAR_LINKS_USER : NAVBAR_LINKS_GUEST;
 
