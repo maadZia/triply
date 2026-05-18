@@ -1,11 +1,11 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import MainLayout from "./layout";
-import HomePage from "./features/home/HomePage";
-import ExplorePage from "./features/explore/ExplorePage";
-import SchedulePage from "./features/schedule/SchedulePage";
-import ProfilePage from "./features/profile/Profile";
-import LoginPage from "./features/auth/screens/LoginPage";
-import RegisterPage from "./features/auth/screens/RegisterPage";
+import MainLayout from "@/layout";
+import HomePage from "@/features/home/HomePage";
+import ExplorePage from "@/features/explore/ExplorePage";
+import SchedulePage from "@/features/schedule/SchedulePage";
+import ProfilePage from "@/features/profile/Profile";
+import LoginPage from "@/features/auth/screens/LoginPage";
+import RegisterPage from "@/features/auth/screens/RegisterPage";
 
 function App() {
   return (
