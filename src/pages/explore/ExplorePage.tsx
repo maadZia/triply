@@ -1,6 +1,6 @@
-import { PlaceCardVertical } from "@/components/cards/PlaceCard/PlaceCardVertical";
-import { Button } from "@/components/atoms/Button";
-import { HeartButton } from "@/components/atoms/icons";
+import { PlaceCardVertical } from "@/components/shared/PlaceCard/PlaceCardVertical";
+import { Button } from "@/components/design-system/atoms/Button";
+import { HeartButton } from "@/components/design-system/atoms/icons";
 
 export default function ExplorePage() {
   return (

@@ -1,5 +1,5 @@
-import { Button } from "@/components/atoms/Button";
-import { Tabs, TabItem } from "@/components/navigation/Tabs";
+import { Button } from "@/components/design-system/atoms/Button";
+import { Tabs, TabItem } from "@/components/design-system/navigation/Tabs";
 import { useAuth } from "@/providers/AuthContext";
 import { useSearchParams } from "react-router-dom";
 import { PlansSection } from "@/features/profile/sections/PlansSection";

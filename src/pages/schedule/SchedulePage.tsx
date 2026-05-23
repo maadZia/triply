@@ -1,4 +1,4 @@
-import { PlaceCardHorizontal } from "@/components/cards/PlaceCard/PlaceCardHorizontal";
+import { PlaceCardHorizontal } from "@/components/shared/PlaceCard/PlaceCardHorizontal";
 import { ArrowsUpDownIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 export default function SchedulePage() {

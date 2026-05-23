@@ -7,10 +7,10 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
-import { Input, InputGroup } from "@/components/forms/Input";
-import { Button } from "@/components/atoms/Button";
-import { Divider } from "@/components/atoms/Divider";
-import { LightCard } from "@/components/cards/LightCard";
+import { Input, InputGroup } from "@/components/design-system/forms/Input";
+import { Button } from "@/components/design-system/atoms/Button";
+import { Divider } from "@/components/design-system/atoms/Divider";
+import { LightCard } from "@/components/design-system/cards/LightCard";
 import { EnvelopeIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 
 type ActionState = {

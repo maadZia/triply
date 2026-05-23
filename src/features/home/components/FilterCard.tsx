@@ -1,13 +1,13 @@
-import { DarkCard } from "@/components/cards/DarkCard";
-import { H1, H2 } from "@/components/typography/Heading";
-import { P1 } from "@/components/typography/Paragraph";
-import { Divider } from "@/components/atoms/Divider";
-import { Fieldset, Field } from "@/components/forms/Fieldset.tsx";
-import { Label } from "@/components/typography/Label";
-import { Input, InputGroup } from "@/components/forms/Input";
+import { DarkCard } from "@/components/design-system/cards/DarkCard";
+import { H1, H2 } from "@/components/design-system/typography/Heading";
+import { P1 } from "@/components/design-system/typography/Paragraph";
+import { Divider } from "@/components/design-system/atoms/Divider";
+import { Fieldset, Field } from "@/components/design-system/forms/Fieldset.tsx";
+import { Label } from "@/components/design-system/typography/Label";
+import { Input, InputGroup } from "@/components/design-system/forms/Input";
 import { MapPinIcon } from "@heroicons/react/24/outline";
-import { Button } from "@/components/atoms/Button";
-import { Switch } from "@/components/forms/Switch";
+import { Button } from "@/components/design-system/atoms/Button";
+import { Switch } from "@/components/design-system/forms/Switch";
 
 export function FilterCard() {
   return (
