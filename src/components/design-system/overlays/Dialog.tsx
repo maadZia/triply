@@ -42,7 +42,7 @@ export function DialogPanel({ children, className }: DialogPanelProps) {
   return (
     <HeadlessDialog.Panel
       className={cn(
-        "w-full max-w-lg rounded-2xl border border-borderSecondary bg-white p-6 shadow-xl",
+        "w-full max-w-lg rounded-2xl border border-borderSecondary bg-backgroundPrimary p-6 shadow-xl",
         className,
       )}
     >

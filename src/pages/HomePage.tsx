@@ -15,7 +15,7 @@ import {
 } from "@/components/shared/PlaceDetailsDialog";
 
 export default function HomePage() {
-  const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
+  const [selectedPlace, setSelectedPlace] = useState<Place>();
 
   const places: Place[] = [
     {
@@ -69,9 +69,9 @@ export default function HomePage() {
       </main>
 
       <PlaceDetailsDialog
-        place={selectedPlace}
+        place={selectedPlace ?? undefined}
         open={!!selectedPlace}
-        onClose={() => setSelectedPlace(null)}
+        onClose={() => setSelectedPlace(undefined)}
       />
     </>
   );
