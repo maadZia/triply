@@ -1,13 +1,26 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Link } from "@/components/atoms/Link";
 import { NavbarItem } from "./NavbarItem";
 import { NAVBAR_LINKS_GUEST, NAVBAR_LINKS_USER } from "./navbarLinks";
 import { Button } from "@/components/atoms/Button";
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { useAuth } from "@/providers/AuthContext";
 
 export function NavbarDesktop() {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const isLoggedIn = !!user;
 
-  const isLoggedIn = true;
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      navigate("/");
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
 
   const links = isLoggedIn ? NAVBAR_LINKS_USER : NAVBAR_LINKS_GUEST;
 
@@ -42,8 +55,9 @@ export function NavbarDesktop() {
       </nav>
 
       {pathname !== "/login" &&
+        pathname !== "/register" &&
         (isLoggedIn ? (
-          <Button outline to={"/login"}>
+          <Button outline onClick={handleSignOut}>
             Wyloguj się
           </Button>
         ) : (
