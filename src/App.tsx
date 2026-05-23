@@ -1,14 +1,14 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import MainLayout from "@/layout";
-import HomePage from "@/features/home/HomePage";
-import ExplorePage from "@/features/explore/ExplorePage";
-import SchedulePage from "@/features/schedule/SchedulePage";
-import ProfilePage from "@/features/profile/Profile";
+import HomePage from "@/pages/HomePage";
+import ExplorePage from "@/pages/explore/ExplorePage";
+import SchedulePage from "@/pages/schedule/SchedulePage";
+import ProfilePage from "@/pages/profile/ProfilePage";
 import PlansTab from "@/features/profile/tabs/PlansTab";
 import PlacesTab from "@/features/profile/tabs/PlacesTab";
 import PreferencesTab from "@/features/profile/tabs/PreferencesTab";
-import LoginPage from "@/features/auth/pages/LoginPage";
-import RegisterPage from "@/features/auth/pages/RegisterPage";
+import LoginPage from "@/pages/auth/LoginPage";
+import RegisterPage from "@/pages/auth/RegisterPage";
 import { AuthProvider } from "@/providers/AuthProvider";
 
 function App() {
