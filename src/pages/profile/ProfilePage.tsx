@@ -1,10 +1,14 @@
 import { Button } from "@/components/atoms/Button";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Tabs, TabItem } from "@/components/navigation/Tabs";
 import { useAuth } from "@/providers/AuthContext";
+import { useSearchParams } from "react-router-dom";
+import { PlansSection } from "@/features/profile/sections/PlansSection";
+import { PlacesSection } from "@/features/profile/sections/PlacesSection";
+import { PreferencesSection } from "@/features/profile/sections/PreferencesSection";
 
 export default function ProfilePage() {
   const { user, loading } = useAuth();
-  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   if (loading) {
     return (
@@ -24,42 +28,55 @@ export default function ProfilePage() {
   }
 
   const tabs = [
-    { id: "plans", label: "Plany", path: "/profile/plans" },
-    { id: "places", label: "Miejsca", path: "/profile/places" },
-    { id: "preferences", label: "Preferencje", path: "/profile/preferences" },
-  ];
+    { id: "plans", label: "Plany" },
+    { id: "places", label: "Miejsca" },
+    { id: "preferences", label: "Preferencje" },
+  ] as const;
+
+  const activeTab = searchParams.get("tab") ?? "plans";
+
+  const handleTabChange = (tabId: string) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set("tab", tabId);
+      return next;
+    });
+  };
 
   return (
-    <main className="max-w-6xl mx-auto w-full mt-12 px-8">
-      {/* Header section */}
+    <main className="mx-auto mt-12 w-full max-w-6xl px-8">
+      {/* Header */}
       <div className="flex items-start justify-between">
         <div className="space-y-2">
           <h1 className="text-4xl font-bold text-contentPrimary">
             Moja Biblioteka
           </h1>
-          <p className="text-contentSecondary text-sm">
+
+          <p className="text-sm text-contentSecondary">
             Zapisane plany, miejsca i preferencje
           </p>
         </div>
 
-        {/* Small profile info flexed to the right */}
-        <div className="flex items-center gap-3 bg-white p-2 pr-4 rounded-full shadow-sm border border-borderSecondary">
+        {/* Profile */}
+        <div className="flex items-center gap-3 rounded-full border border-borderSecondary bg-white p-2 pr-4 shadow-sm">
           {user.photoURL ? (
             <img
               src={user.photoURL}
               alt="Profile"
-              className="w-10 h-10 rounded-full border border-borderSecondary object-cover"
+              className="h-10 w-10 rounded-full border border-borderSecondary object-cover"
             />
           ) : (
-            <div className="w-10 h-10 rounded-full bg-accentLight flex items-center justify-center text-accentDark font-bold text-lg shadow-sm">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accentLight text-lg font-bold text-accentDark shadow-sm">
               {user.email?.[0].toUpperCase() || "U"}
             </div>
           )}
+
           <div className="flex flex-col">
-            <span className="text-sm font-medium text-contentPrimary leading-tight">
+            <span className="text-sm font-medium leading-tight text-contentPrimary">
               {user.displayName || "Użytkownik"}
             </span>
-            <span className="text-xs text-contentSecondary leading-tight">
+
+            <span className="text-xs leading-tight text-contentSecondary">
               {user.email}
             </span>
           </div>
@@ -68,28 +85,25 @@ export default function ProfilePage() {
 
       {/* Tabs */}
       <div className="mt-12">
-        <div className="flex gap-8 border-b border-borderSecondary/60">
-          {tabs.map((tab) => {
-            const isActive = location.pathname.startsWith(tab.path);
-            return (
-              <Link
-                key={tab.id}
-                to={tab.path}
-                className={`pb-3 px-1 text-sm font-medium transition-colors border-b-2 ${
-                  isActive
-                    ? "border-accentDark text-accentDark"
-                    : "border-transparent text-contentSecondary hover:text-contentPrimary"
-                }`}
-              >
-                {tab.label}
-              </Link>
-            );
-          })}
-        </div>
+        <Tabs>
+          {tabs.map((tab) => (
+            <TabItem
+              key={tab.id}
+              current={activeTab === tab.id}
+              onClick={() => handleTabChange(tab.id)}
+            >
+              {tab.label}
+            </TabItem>
+          ))}
+        </Tabs>
 
-        {/* Tab content via React Router */}
+        {/* Content */}
         <div className="py-8">
-          <Outlet />
+          {activeTab === "plans" && <PlansSection />}
+
+          {activeTab === "places" && <PlacesSection />}
+
+          {activeTab === "preferences" && <PreferencesSection />}
         </div>
       </div>
     </main>
