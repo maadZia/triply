@@ -36,7 +36,11 @@ export function PlaceCardHorizontal({
           <P3>{description}</P3>
         </section>
 
-        <Button plain className="mt-auto self-start" onClick={onDetailsClick}>
+        <Button
+          plain
+          className="mt-auto self-start px-0"
+          onClick={onDetailsClick}
+        >
           Pokaż szczegóły
         </Button>
       </div>

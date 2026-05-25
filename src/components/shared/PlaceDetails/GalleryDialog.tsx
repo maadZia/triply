@@ -7,7 +7,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "@heroicons/react/24/solid";
-import { cn } from "../utils";
+import { cn } from "../../utils";
 
 type GalleryDialogProps = {
   images: string[];

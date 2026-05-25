@@ -29,7 +29,7 @@ const MAP_MARKERS = [
 
 export default function SchedulePage() {
   return (
-    <div className="flex h-full overflow-hidden">
+    <div className="flex min-h-[80vh] overflow-hidden">
       {/* ── Column 1: Day picker ── */}
       <aside className="w-40 shrink-0 border-r border-gray-200 bg-white overflow-y-auto">
         <div className="p-4 border-b border-gray-100">
@@ -67,7 +67,7 @@ export default function SchedulePage() {
           <PlaceCardHorizontal
             title="Zamek królewski na Wawelu"
             description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-            img="./wawel.png"
+            img="./places/wawel-1.png"
             actionButtons={
               <>
                 <ArrowsUpDownIcon className="w-5 h-5" />

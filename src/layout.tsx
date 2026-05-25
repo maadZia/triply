@@ -3,9 +3,9 @@ import { Navbar } from "@/components/design-system/navigation/Navbar";
 
 export default function MainLayout() {
   return (
-    <main className="mx-auto flex flex-col h-screen w-full max-w-7xl bg-backgroundPrimary text-contentPrimary p-2 gap-8">
+    <main className="mx-auto flex flex-col min-h-screen w-full max-w-7xl bg-backgroundPrimary text-contentPrimary p-2 gap-4">
       <Navbar />
-      <div className="flex-1 min-h-0">
+      <div className="flex-1 py-8">
         <Outlet />
       </div>
     </main>

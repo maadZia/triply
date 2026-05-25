@@ -15,8 +15,8 @@ import {
   MapPinIcon,
   WalletIcon,
 } from "@heroicons/react/24/solid";
-import { Divider } from "../design-system/atoms/Divider";
-import { cn } from "../utils";
+import { Divider } from "../../design-system/atoms/Divider";
+import { cn } from "../../utils";
 import { GalleryDialog } from "./GalleryDialog";
 
 export type Place = {
