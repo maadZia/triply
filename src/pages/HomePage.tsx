@@ -19,20 +19,71 @@ export default function HomePage() {
 
   const places: Place[] = [
     {
-      title: "Zamek królewski na Wawelu",
+      title: "Zamek Królewski na Wawelu",
       description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      img: "./wawel.png",
+        "Zamek na Wawelu to jeden z najważniejszych zabytków Polski. Jego historia sięga XIII wieku, kiedy to stał się rezydencją książąt krakowskich. W XVI wieku Zygmunt III Waza przenosi tu swoją siedzibę z Wilna. Dziś Zamek przyciąga turystów z całego świata zabytkową architekturą i bogatą kolekcją sztuki.",
+      img: "./places/wawel-1.png",
+      images: [
+        "./places/wawel-1.png",
+        "./places/wawel-2.png",
+        "./places/wawel-3.png",
+        "./places/wawel-4.png",
+        "./places/wawel-5.png",
+      ],
+      category: "ZABYTKI",
+      rating: {
+        score: 4.9,
+        reviews: 2450,
+      },
+      hours: "9:00 - 17:00",
+      location: "Wawel 5, 31-001 Kraków",
+      price: {
+        normal: 30,
+        reduced: 20,
+        currency: "PLN",
+      },
     },
     {
       title: "Rynek Główny",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      img: "./wawel.png",
+      description:
+        "Rynek Główny w Krakowie to jedno z największych i najpiękniejszych miast w Europie. W jego centrum znajduje się wspaniały Sukiennice z XVI wieku. Otoczony zabytkową zabudową, stanowi serce starego miasta i jest wpisany na listę światowego dziedzictwa UNESCO.",
+      img: "./places/wawel-1.png",
+      images: [
+        "./places/wawel-1.png",
+        "./places/wawel-1.png",
+        "./places/wawel-1.png",
+      ],
+      category: "OBIEKTY ZABYTKOWE",
+      rating: {
+        score: 4.8,
+        reviews: 3120,
+      },
+      hours: "10:00 - 22:00",
+      location: "Rynek Główny 1, 31-042 Kraków",
+      price: {
+        normal: 0,
+        reduced: 0,
+        currency: "PLN",
+      },
     },
     {
       title: "Kazimierz",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      img: "./wawel.png",
+      description:
+        "Historyczna dzielnica Kazimierz przyciąga artystów, turystów i miłośników kultury. To miejsce pełne galerii, kawiarenek i restauracji, gdzie historia żydowska przeplatana jest współczesną sztuką. Bożnice, synagogi i stare domy tworzą wyjątkową atmosferę.",
+      img: "./places/wawel-1.png",
+      images: ["./places/wawel-1.png", "./places/wawel-1.png"],
+      category: "DZIELNICE",
+      rating: {
+        score: 4.6,
+        reviews: 1890,
+      },
+      hours: "Całą dobę otwarte",
+      location: "Kazimierz, Kraków",
+      price: {
+        normal: 0,
+        reduced: 0,
+        currency: "PLN",
+      },
     },
   ];
 
