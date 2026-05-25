@@ -12,7 +12,7 @@ import {
 import {
   PlaceDetailsDialog,
   type Place,
-} from "@/components/shared/PlaceCard/PlaceDetailsDialog";
+} from "@/components/shared/PlaceDetails/PlaceDetailsDialog";
 
 export default function HomePage() {
   const [selectedPlace, setSelectedPlace] = useState<Place>();
