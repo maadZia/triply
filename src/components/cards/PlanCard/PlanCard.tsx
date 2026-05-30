@@ -23,7 +23,7 @@ export function PlanCard({
   onViewPlan,
 }: PlanCardProps) {
   return (
-    <LightCard className="w-full max-w-[340px] overflow-hidden flex flex-col p-0">
+    <LightCard className="w-full max-w-[330px] overflow-hidden flex flex-col p-0">
       {/* Image */}
       <div className="w-full aspect-4/3 overflow-hidden">
         <img src={img} alt={title} className="w-full h-full object-cover" />

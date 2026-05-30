@@ -3,7 +3,6 @@ import { PlanCard } from "@/components/cards/PlanCard/PlanCard";
 import paris1 from "/paris1.jpeg";
 import paris2 from "/paris2.jpeg";
 
-// Mock data mirroring the design
 const PLANS = [
   {
     city: "Paryż",
