@@ -1,7 +1,7 @@
-import { ExpandableCard } from "@/components/cards/ExpandableCard/ExpandableCard";
-import { PlaceCardVertical } from "@/components/cards/PlaceCard/PlaceCardVertical";
-import { HeartButton } from "@/components/atoms/icons/HeartButton";
-import { Button } from "@/components/atoms/Button";
+import { ExpandableCard } from "@/components/design-system/cards/ExpandableCard";
+import { PlaceCardVertical } from "@/components/shared/PlaceCard/PlaceCardVertical";
+import { HeartButton } from "@/components/design-system/atoms/icons/HeartButton";
+import { Button } from "@/components/design-system/atoms/Button";
 
 // Mock data
 const PLACES = [
