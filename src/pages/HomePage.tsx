@@ -22,13 +22,13 @@ export default function HomePage() {
       title: "Zamek Królewski na Wawelu",
       description:
         "Zamek na Wawelu to jeden z najważniejszych zabytków Polski. Jego historia sięga XIII wieku, kiedy to stał się rezydencją książąt krakowskich. W XVI wieku Zygmunt III Waza przenosi tu swoją siedzibę z Wilna. Dziś Zamek przyciąga turystów z całego świata zabytkową architekturą i bogatą kolekcją sztuki.",
-      img: "./places/wawel-1.png",
+      img: "./places/cracow/wawel-1.png",
       images: [
-        "./places/wawel-1.png",
-        "./places/wawel-2.png",
-        "./places/wawel-3.png",
-        "./places/wawel-4.png",
-        "./places/wawel-5.png",
+        "./places/cracow/wawel-1.png",
+        "./places/cracow/wawel-2.png",
+        "./places/cracow/wawel-3.png",
+        "./places/cracow/wawel-4.png",
+        "./places/cracow/wawel-5.png",
       ],
       category: "ZABYTKI",
       rating: {
@@ -47,11 +47,11 @@ export default function HomePage() {
       title: "Rynek Główny",
       description:
         "Rynek Główny w Krakowie to jedno z największych i najpiękniejszych miast w Europie. W jego centrum znajduje się wspaniały Sukiennice z XVI wieku. Otoczony zabytkową zabudową, stanowi serce starego miasta i jest wpisany na listę światowego dziedzictwa UNESCO.",
-      img: "./places/wawel-1.png",
+      img: "./places/cracow/wawel-1.png",
       images: [
-        "./places/wawel-1.png",
-        "./places/wawel-1.png",
-        "./places/wawel-1.png",
+        "./places/cracow/wawel-1.png",
+        "./places/cracow/wawel-1.png",
+        "./places/cracow/wawel-1.png",
       ],
       category: "OBIEKTY ZABYTKOWE",
       rating: {
@@ -70,8 +70,8 @@ export default function HomePage() {
       title: "Kazimierz",
       description:
         "Historyczna dzielnica Kazimierz przyciąga artystów, turystów i miłośników kultury. To miejsce pełne galerii, kawiarenek i restauracji, gdzie historia żydowska przeplatana jest współczesną sztuką. Bożnice, synagogi i stare domy tworzą wyjątkową atmosferę.",
-      img: "./places/wawel-1.png",
-      images: ["./places/wawel-1.png", "./places/wawel-1.png"],
+      img: "./places/cracow/wawel-1.png",
+      images: ["./places/cracow/wawel-1.png", "./places/cracow/wawel-1.png"],
       category: "DZIELNICE",
       rating: {
         score: 4.6,
