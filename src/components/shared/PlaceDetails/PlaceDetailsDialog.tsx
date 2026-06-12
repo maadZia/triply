@@ -41,6 +41,7 @@ export type Place = {
 type PlaceDetailsDialogProps = {
   place?: Place;
   open: boolean;
+  showActions?: boolean;
   onClose: () => void;
 };
 
@@ -48,6 +49,7 @@ export function PlaceDetailsDialog({
   place,
   open,
   onClose,
+  showActions = true,
 }: PlaceDetailsDialogProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
@@ -202,10 +204,13 @@ export function PlaceDetailsDialog({
               )}
             </div>
 
-            <Divider className="my-4" />
+            {showActions ? (
+              <Divider className="my-4" />
+            ) : null}
 
             {/* Footer - Actions */}
-            <div className="flex gap-3 items-center">
+            {showActions ? (
+              <div className="flex gap-3 items-center">
               <Button className="flex-1">Dodaj do planu</Button>
               <HeartButton
                 defaultLiked={isFavorite}
@@ -213,6 +218,7 @@ export function PlaceDetailsDialog({
                 className="p-2"
               />
             </div>
+            ) : null}
           </div>
         </div>
       </DialogPanel>
