@@ -43,6 +43,7 @@ type PlaceDetailsDialogProps = {
   open: boolean;
   showActions?: boolean;
   onClose: () => void;
+  onAddToPlan?: () => void;
 };
 
 export function PlaceDetailsDialog({
@@ -50,6 +51,7 @@ export function PlaceDetailsDialog({
   open,
   onClose,
   showActions = true,
+  onAddToPlan,
 }: PlaceDetailsDialogProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
@@ -69,6 +71,40 @@ export function PlaceDetailsDialog({
 
   const handleGalleryImageChange = (idx: number) => {
     setSelectedImageIndex(idx);
+  };
+
+  const handleAddToPlan = () => {
+    if (typeof window === "undefined" || !place) return;
+
+    const savedSelectedDay = localStorage.getItem("trip_schedule_selected_day");
+    const selectedDayId = savedSelectedDay ? Number(savedSelectedDay) : 1;
+    const savedDays = localStorage.getItem("trip_schedule_days");
+
+    if (savedDays) {
+      try {
+        const days = JSON.parse(savedDays);
+
+        const updatedDays = days.map((day: any) => {
+          if (day.id === selectedDayId) {
+            return {
+              ...day,
+              places: [...(day.places || []), place],
+            };
+          }
+          return day;
+        });
+
+        localStorage.setItem("trip_schedule_days", JSON.stringify(updatedDays));
+
+        if (onAddToPlan) {
+          onAddToPlan();
+        }
+
+        onClose();
+      } catch (error) {
+        console.error("Błąd zapisu do localStorage:", error);
+      }
+    }
   };
 
   return (
@@ -211,13 +247,15 @@ export function PlaceDetailsDialog({
             {/* Footer - Actions */}
             {showActions ? (
               <div className="flex gap-3 items-center">
-              <Button className="flex-1">Dodaj do planu</Button>
-              <HeartButton
-                defaultLiked={isFavorite}
-                onToggle={setIsFavorite}
-                className="p-2"
-              />
-            </div>
+                <Button className="flex-1" onClick={handleAddToPlan}>
+                  Dodaj do planu
+                </Button>
+                <HeartButton
+                  defaultLiked={isFavorite}
+                  onToggle={setIsFavorite}
+                  className="p-2"
+                />
+              </div>
             ) : null}
           </div>
         </div>
