@@ -8,6 +8,7 @@ import { Button } from "@/components/design-system/atoms/Button";
 import { HeartButton } from "@/components/design-system/atoms/icons";
 import { H2 } from "@/components/design-system/typography/Heading";
 import { P2, P3 } from "@/components/design-system/typography/Paragraph";
+import type { TripDay } from "@/components/shared/types";
 import {
   XMarkIcon,
   StarIcon,
@@ -84,7 +85,7 @@ export function PlaceDetailsDialog({
       try {
         const days = JSON.parse(savedDays);
 
-        const updatedDays = days.map((day: any) => {
+        const updatedDays = days.map((day: TripDay) => {
           if (day.id === selectedDayId) {
             return {
               ...day,

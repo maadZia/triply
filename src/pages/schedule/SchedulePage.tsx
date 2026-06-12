@@ -46,13 +46,6 @@ const INITIAL_PLACES: Place[] = [
   },
 ];
 
-interface TripDay {
-  id: number;
-  label: string;
-  date: string;
-  places: Place[];
-}
-
 const MAP_MARKERS = [
   {
     id: 1,
