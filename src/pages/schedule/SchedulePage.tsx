@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useState, useEffect } from "react";
 import { PlaceCardHorizontal } from "@/components/shared/PlaceCard/PlaceCardHorizontal";
 import { Button } from "@/components/design-system/atoms/Button";
 import { PlaceDetailsDialog, type Place } from "@/components/shared/PlaceDetails/PlaceDetailsDialog";
@@ -63,15 +63,41 @@ const MAP_MARKERS = [
 ];
 
 export default function SchedulePage() {
-  const [days, setDays] = useState<TripDay[]>([
-    { id: 1, label: "Dzień 1", date: "pon, 2 cze", places: [...INITIAL_PLACES] },
-    { id: 2, label: "Dzień 2", date: "wt, 3 cze", places: [] },
-    { id: 3, label: "Dzień 3", date: "śr, 4 cze", places: [] },
-    { id: 4, label: "Dzień 4", date: "czw, 5 cze", places: [] },
-  ]);
+  const [days, setDays] = useState<TripDay[]>(() => {
+    if (typeof window !== "undefined") {
+      const savedDays = localStorage.getItem("trip_schedule_days");
+      if (savedDays) {
+        try {
+          return JSON.parse(savedDays);
+        } catch (e) {
+          console.error("Błąd parsowania danych z localStorage", e);
+        }
+      }
+    }
+    return [
+      { id: 1, label: "Dzień 1", date: "pon, 2 cze", places: [...INITIAL_PLACES] },
+      { id: 2, label: "Dzień 2", date: "wt, 3 cze", places: [] },
+      { id: 3, label: "Dzień 3", date: "śr, 4 cze", places: [] },
+      { id: 4, label: "Dzień 4", date: "czw, 5 cze", places: [] },
+    ];
+  });
 
-  const [selectedDayId, setSelectedDayId] = useState<number>(1);
+  const [selectedDayId, setSelectedDayId] = useState<number>(() => {
+    if (typeof window !== "undefined") {
+      const savedId = localStorage.getItem("trip_schedule_selected_day");
+      if (savedId) return Number(savedId);
+    }
+    return days[0]?.id || 1;
+  });
+
   const [selectedPlace, setSelectedPlace] = useState<Place>();
+  useEffect(() => {
+    localStorage.setItem("trip_schedule_days", JSON.stringify(days));
+  }, [days]);
+
+  useEffect(() => {
+    localStorage.setItem("trip_schedule_selected_day", selectedDayId.toString());
+  }, [selectedDayId]);
 
   const currentDay = days.find((d) => d.id === selectedDayId) || days[0];
 
@@ -138,8 +164,8 @@ export default function SchedulePage() {
 
   return (
     <div className="flex min-h-[80vh] overflow-hidden">
-      <aside className="w-46 shrink-0 border-r border-gray-200 bg-white flex flex-col justify-between">
-        <div className="overflow-y-auto flex-1">
+      <aside className="w-46 shrink-0 border-r border-gray-200 flex-col justify-between">
+        <div className="overflow-y-auto flex-2">
           <div className="p-4 border-b border-gray-100">
             <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-400">
               Dni podróży
@@ -165,7 +191,7 @@ export default function SchedulePage() {
           </ul>
         </div>
 
-        <div className="p-3 border-t border-gray-100 bg-gray-50 flex flex-col gap-2">
+        <div className="p-3 border-t border-gray-100 flex flex-col gap-2">
           <Button
             outline
             className="w-full text-xs py-2"
