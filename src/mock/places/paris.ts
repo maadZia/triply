@@ -18,8 +18,11 @@ export const parisPlaces: Place[] = [
       "Symbol Paryża i jedna z najbardziej rozpoznawalnych budowli świata. Żelazna dama, zaprojektowana przez Gustave'a Eiffla na Wystawę Światową 1889, wznosi się na 330 metrów. Z platform widokowych rozciąga się zapierający dech w piersiach widok na całe miasto. Wieczorem co godzinę wieża rozbłyswa tysiącem świateł.",
     city: "Paryż",
     country: "Francja",
-    images: ["./places/paris/eiffel-1.png", "./places/paris/eiffel-2.png"],
-    mainImage: "./places/paris/eiffel-1.png",
+    images: [
+      "/places/paris/eiffel/eiffel-1.jpeg",
+      "/places/paris/eiffel/eiffel-2.jpeg",
+    ],
+    mainImage: "/places/paris/eiffel/eiffel-1.jpeg",
     rating: { score: 4.7, reviews: 45230 },
     location: {
       address: "Champ de Mars, 5 Av. Anatole France, 75007 Paris",
@@ -61,8 +64,11 @@ export const parisPlaces: Place[] = [
       "Największe muzeum sztuki na świecie i historyczna rezydencja francuskich królów. W kolekcji znajdują się niezliczone skarby, w tym Mona Lisa Leonarda da Vinci, Wenus z Milo i Nike z Samotraki. Same galerie, z I.M. Pei's szklaną piramidą na dziedzińcu, są dziełem sztuki.",
     city: "Paryż",
     country: "Francja",
-    images: ["./places/paris/louvre-1.png", "./places/paris/louvre-2.png"],
-    mainImage: "./places/paris/louvre-1.png",
+    images: [
+      "/places/paris/louvre/louvre-1.jpg",
+      "/places/paris/louvre/louvre-2.jpg",
+    ],
+    mainImage: "/places/paris/louvre/louvre-1.jpg",
     rating: { score: 4.8, reviews: 38290 },
     location: {
       address: "Rue de Rivoli, 75001 Paris",
@@ -107,8 +113,8 @@ export const parisPlaces: Place[] = [
       "Gotycka katedra z XII-XIV wieku, arcydzieło architektury średniowiecznej. Mimo pożaru w 2019 roku, nadal zachwyca swoją fasadą z rozeta i dwiema wieżami. To tutaj Victor Dumas umieścił akcję 'Katedry Marii Panny w Paryżu' ze słynnym dzwonnikem Quasimodo.",
     city: "Paryż",
     country: "Francja",
-    images: ["./places/paris/notredame-1.png"],
-    mainImage: "./places/paris/notredame-1.png",
+    images: ["/places/paris/notre-dame/notre-dame-1.jpg"],
+    mainImage: "/places/paris/notre-dame/notre-dame-1.jpg",
     rating: { score: 4.7, reviews: 28450 },
     location: {
       address: "6 Parvis Notre-Dame - Pl. Jean-Paul II, 75004 Paris",
@@ -150,8 +156,8 @@ export const parisPlaces: Place[] = [
       "Najsłynniejsza aleja świata, ciągnąca się od Place de la Concorde do Łuku Triumfalnego. Lined with luxury boutiques, theaters and cafes, to ulubione miejsce spacerów paryżan i turystów. Łuk Triumfalny upamiętnia wojny napoleońskie, a z jego szczytu rozciąga się piękny widok na avenię prowadzącą do placu Concorde.",
     city: "Paryż",
     country: "Francja",
-    images: ["./places/paris/champs-1.png"],
-    mainImage: "./places/paris/champs-1.png",
+    images: ["/places/paris/champs/champs-1.jpg"],
+    mainImage: "/places/paris/champs/champs-1.jpg",
     rating: { score: 4.6, reviews: 32180 },
     location: {
       address: "Av. des Champs-Élysées, 75008 Paris",
@@ -198,10 +204,10 @@ export const parisPlaces: Place[] = [
     city: "Paryż",
     country: "Francja",
     images: [
-      "./places/paris/montmartre-1.png",
-      "./places/paris/montmartre-2.png",
+      "/places/paris/montmare/montmare-1.jpeg",
+      "/places/paris/sacre-couer/sacre-couer-1.jpg",
     ],
-    mainImage: "./places/paris/montmartre-1.png",
+    mainImage: "/places/paris/montmare/montmare-1.jpeg",
     rating: { score: 4.7, reviews: 29860 },
     location: {
       address: "35 Rue du Chevalier de la Barre, 75018 Paris",
@@ -239,8 +245,8 @@ export const parisPlaces: Place[] = [
       "Dawny dworzec kolejowy zamieniony w muzeum sztuki impresjonistycznej. Znajduje się tu największa kolekcja dzieł impresjonistów i postimpresjonistów - od Moneta, Renoira i Van Gogha po Degas'a i Gauguina. Szklany sufit i zegar zachowały ducha dawnego dworca.",
     city: "Paryż",
     country: "Francja",
-    images: ["./places/paris/orsay-1.png"],
-    mainImage: "./places/paris/orsay-1.png",
+    images: ["/places/paris/orsay/orsay-1.jpg"],
+    mainImage: "/places/paris/orsay/orsay-1.jpg",
     rating: { score: 4.8, reviews: 15640 },
     location: {
       address: "1 Rue de la Légion d'Honneur, 75007 Paris",
@@ -281,8 +287,8 @@ export const parisPlaces: Place[] = [
       "Gotycka kaplica z XIII wieku, ukryta na terenie Pałacu Sprawiedliwości. Jest najwybitniejszym przykładem architektury gotyckiej w Paryżu - 15-metrowe witraże pokrywają 1114 scen z Biblii w olśniewających kolorach. To jedno z najbardziej magicznych miejsc w mieście.",
     city: "Paryż",
     country: "Francja",
-    images: ["./places/paris/saintechapelle-1.png"],
-    mainImage: "./places/paris/saintechapelle-1.png",
+    images: ["/places/paris/saintechapelle/saintechapelle-1.jpg"],
+    mainImage: "/places/paris/saintechapelle/saintechapelle-1.jpg",
     rating: { score: 4.8, reviews: 12350 },
     location: {
       address: "8 Boulevard du Palais, 75001 Paris",
@@ -325,10 +331,10 @@ export const parisPlaces: Place[] = [
     city: "Wersal",
     country: "Francja",
     images: [
-      "./places/paris/versailles-1.png",
-      "./places/paris/versailles-2.png",
+      "/places/paris/versailles/versailles-1.jpg",
+      "/places/paris/versailles/versailles-2.jpg",
     ],
-    mainImage: "./places/paris/versailles-1.png",
+    mainImage: "/places/paris/versailles/versailles-1.jpg",
     rating: { score: 4.7, reviews: 24180 },
     location: {
       address: "Place d'Armes, 78000 Versailles",
@@ -373,8 +379,8 @@ export const parisPlaces: Place[] = [
       "Neoklasycystyczny mauzoleum, pierwotnie planowane jako kościół, obecnie ostatnie miejsce spoczynku wielkich Francuzów. Pod kopułą zaprojektowaną na wzór Panteonu w Rzymie spoczywają Voltaire, Rousseau, Victor Hugo, Marie Curie i inni. Napis na fasadzie głosi: 'Wielkim ludziom wdzięczna ojczyzna'.",
     city: "Paryż",
     country: "Francja",
-    images: ["./places/paris/pantheon-1.png"],
-    mainImage: "./places/paris/pantheon-1.png",
+    images: ["/places/paris/pantheon/pantheon-1.jpg"],
+    mainImage: "/places/paris/pantheon/pantheon-1.jpg",
     rating: { score: 4.5, reviews: 8930 },
     location: {
       address: "Pl. du Panthéon, 75005 Paris",
@@ -416,8 +422,8 @@ export const parisPlaces: Place[] = [
       "Słynny ogród w sercu Dzielnicy Łacińskiej, ulubione miejsce relaksu paryżan. Symetryczne alejki, fontanna Medici, ponad 100 posągów, wynajmowane łódki na stawie i charakterystyczne zielone krzesełka. Idealny na piknik, czytanie książki lub po prostu obserwowanie życia.",
     city: "Paryż",
     country: "Francja",
-    images: ["./places/paris/luxembourg-1.png"],
-    mainImage: "./places/paris/luxembourg-1.png",
+    images: ["/places/paris/luxembourg/luxembourg-1.jpg"],
+    mainImage: "/places/paris/luxembourg/luxembourg-1.jpg",
     rating: { score: 4.6, reviews: 18240 },
     location: {
       address: "75006 Paris",

@@ -19,11 +19,11 @@ export const cracowPlaces: Place[] = [
     city: "Kraków",
     country: "Polska",
     images: [
-      "./places/cracow/wawel-1.png",
-      "./places/cracow/wawel-2.png",
-      "./places/cracow/wawel-3.png",
+      "/places/cracow/wawel/wawel-1.png",
+      "/places/cracow/wawel/wawel-2.png",
+      "/places/cracow/wawel/wawel-3.png",
     ],
-    mainImage: "./places/cracow/wawel-1.png",
+    mainImage: "/places/cracow/wawel/wawel-1.png",
     rating: { score: 4.9, reviews: 12540 },
     location: {
       address: "Wawel 5, 31-001 Kraków",
@@ -65,8 +65,11 @@ export const cracowPlaces: Place[] = [
       "Rynek Główny w Krakowie to jeden z największych i najpiękniejszych placów w Europie. W jego centrum znajdują się wspaniałe Sukiennice z XVI wieku, a pod ziemią kryje się Muzeum Podziemia Rynku. Otoczony zabytkową zabudową, stanowi serce starego miasta i jest wpisany na listę światowego dziedzictwa UNESCO.",
     city: "Kraków",
     country: "Polska",
-    images: ["./places/cracow/rynek-1.png", "./places/cracow/rynek-2.png"],
-    mainImage: "./places/cracow/rynek-1.png",
+    images: [
+      "/places/cracow/rynek/rynek-1.jpg",
+      "/places/cracow/rynek/rynek-2.jpg",
+    ],
+    mainImage: "/places/cracow/rynek/rynek-1.jpg",
     rating: { score: 4.8, reviews: 15420 },
     location: {
       address: "Rynek Główny, 31-042 Kraków",
@@ -105,10 +108,10 @@ export const cracowPlaces: Place[] = [
     city: "Wieliczka",
     country: "Polska",
     images: [
-      "./places/cracow/wieliczka-1.png",
-      "./places/cracow/wieliczka-2.png",
+      "/places/cracow/wieliczka/wieliczka-1.jpg",
+      "/places/cracow/wieliczka/wieliczka-2.jpg",
     ],
-    mainImage: "./places/cracow/wieliczka-1.png",
+    mainImage: "/places/cracow/wieliczka/wieliczka-1.jpg",
     rating: { score: 4.8, reviews: 8920 },
     location: {
       address: "Daniłowicza 10, 32-020 Wieliczka",
@@ -150,8 +153,8 @@ export const cracowPlaces: Place[] = [
       "Galeria Sztuki Polskiej XIX wieku w Sukiennicach prezentuje najwybitniejsze dzieła malarstwa polskiego, w tym słynny 'Wielki dzień Wodzisława' Jana Matejki oraz 'Fosa' Józefa Chełmońskiego. Sukiennice, XV-wieczny budynek handlowy, to perła architektury renesansowej na Rynku Głównym.",
     city: "Kraków",
     country: "Polska",
-    images: ["./places/cracow/sukiennice-1.png"],
-    mainImage: "./places/cracow/sukiennice-1.png",
+    images: ["/places/cracow/sukiennice/sukiennice-1.jpg"],
+    mainImage: "/places/cracow/sukiennice/sukiennice-1.jpg",
     rating: { score: 4.7, reviews: 3240 },
     location: {
       address: "Rynek Główny 3, 31-042 Kraków",
@@ -197,10 +200,10 @@ export const cracowPlaces: Place[] = [
     city: "Kraków",
     country: "Polska",
     images: [
-      "./places/cracow/kazimierz-1.png",
-      "./places/cracow/kazimierz-2.png",
+      "/places/cracow/kazimierz/kazimierz-1.jpg",
+      "/places/cracow/kazimierz/kazimierz-2.jpg",
     ],
-    mainImage: "./places/cracow/kazimierz-1.png",
+    mainImage: "/places/cracow/kazimierz/kazimierz-1.jpg",
     rating: { score: 4.6, reviews: 9870 },
     location: {
       address: "Kazimierz, Kraków",
@@ -234,8 +237,8 @@ export const cracowPlaces: Place[] = [
       "Jedno z najlepszych muzeów lotnictwa w Europie, mieszczące się na terenie dawnego lotniska Rakowice-Czyżyny. Eksponuje ponad 200 statków powietrznych - od XIX-wiecznych szybowców po nowoczesne odrzutowce i helikoptery. Idealne dla fanów techniki i historii lotnictwa.",
     city: "Kraków",
     country: "Polska",
-    images: ["./places/cracow/lotnictwo-1.png"],
-    mainImage: "./places/cracow/lotnictwo-1.png",
+    images: ["/places/cracow/lotnictwo/lotnictwo-1.jpg"],
+    mainImage: "/places/cracow/lotnictwo/lotnictwo-1.jpg",
     rating: { score: 4.7, reviews: 2150 },
     location: {
       address: "Aleja Jana Pawła II 39, 31-864 Kraków",
@@ -272,8 +275,8 @@ export const cracowPlaces: Place[] = [
       "Najstarszy ogród botaniczny w Polski (założony 1783), ukryty za murami w centrum miasta. Na 5 hektarach rośnie ponad 5000 gatunków roślin z całego świata - od alpejskich szczytów po tropikalne dżungle. Doskonałe miejsce na relaks i ucieczkę od miejskiego zgiełku.",
     city: "Kraków",
     country: "Polska",
-    images: ["./places/cracow/ogrod-1.png"],
-    mainImage: "./places/cracow/ogrod-1.png",
+    images: ["/places/cracow/ogrod/ogrod-1.jpg"],
+    mainImage: "/places/cracow/ogrod/ogrod-1.jpg",
     rating: { score: 4.6, reviews: 1840 },
     location: {
       address: "Mikołaja Kopernika 27, 31-501 Kraków",
@@ -315,8 +318,8 @@ export const cracowPlaces: Place[] = [
       "Jedyne w Polsce muzeum poświęcone sztuce i technice japońskiej, zaprojektowane przez słynnego japońskiego architekta Arata Isozaki. Znajduje się tu bogata kolekcja sztuki japońskiej dalekiego wschodu - od grafik ukiyo-e po współczesne mangi i anime. Regularnie odbywają się tu pokazy ceremonii herbaty i warsztaty.",
     city: "Kraków",
     country: "Polska",
-    images: ["./places/cracow/manggha-1.png"],
-    mainImage: "./places/cracow/manggha-1.png",
+    images: ["/places/cracow/manggha/manggha-1.png"],
+    mainImage: "/places/cracow/manggha/manggha-1.png",
     rating: { score: 4.5, reviews: 1680 },
     location: {
       address: "Marii Konopnickiej 26, 30-302 Kraków",
@@ -357,8 +360,8 @@ export const cracowPlaces: Place[] = [
       "Gotycka bazylika z XIV wieku, dominująca nad Rynkiem Głównym swoją asymetryczną fasadą z dwiema różnymi wieżami. Słynie z ołtarza Wita Stwosza - największego drewnianego ołtarza gotyckiego na świecie. Co godzinę z wysokiej wieży trębacz wygrywa hejnał mariacki.",
     city: "Kraków",
     country: "Polska",
-    images: ["./places/cracow/mariacki-1.png"],
-    mainImage: "./places/cracow/mariacki-1.png",
+    images: ["/places/cracow/mariacki/mariacki-1.jpg"],
+    mainImage: "/places/cracow/mariacki/mariacki-1.jpg",
     rating: { score: 4.8, reviews: 7650 },
     location: {
       address: "Plac Mariacki 5, 31-042 Kraków",
@@ -404,8 +407,8 @@ export const cracowPlaces: Place[] = [
       "Miejsce spotkań krakowian i turystów nad Wisłą. Nadrzeczne bulwary oferują piękne widoki na Wawel, miejsce do joggingu, rowerów oraz liczne kawiarnie i food trucki. Latem można tu wypożyczyć kajak lub łódkę i spłynąć Wisłą. Idealne na spokojny spacer lub aktywny wypoczynek.",
     city: "Kraków",
     country: "Polska",
-    images: ["./places/cracow/bulwary-1.png"],
-    mainImage: "./places/cracow/bulwary-1.png",
+    images: ["/places/cracow/bulwary/bulwary-1.jpg"],
+    mainImage: "/places/cracow/bulwary/bulwary-1.jpg",
     rating: { score: 4.5, reviews: 4320 },
     location: {
       address: "Bulwary Wiślane, Kraków",

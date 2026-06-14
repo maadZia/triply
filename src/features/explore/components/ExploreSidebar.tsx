@@ -1,17 +1,13 @@
 import {
   PLACE_TYPE,
   CROWD_LEVEL,
-  TRAVEL_STYLE,
   INTEREST_CATEGORY,
   TARGET_GROUP,
   FOOD_TYPE,
-  CUISINE_TYPE,
   CROWD_LEVEL_LABELS,
-  TRAVEL_STYLE_LABELS,
   INTEREST_CATEGORY_LABELS,
   TARGET_GROUP_LABELS,
   FOOD_TYPE_LABELS,
-  CUISINE_TYPE_LABELS,
   PLACE_TYPE_LABELS,
 } from "@/types/places";
 import { H2 } from "@/components/design-system/typography/Heading";
@@ -20,18 +16,11 @@ import { Divider } from "@/components/design-system/atoms/Divider";
 import { Button } from "@/components/design-system/atoms/Button";
 import { Combobox } from "@/components/design-system/forms/Combobox";
 import { CheckboxButton } from "@/components/design-system/forms/CheckboxButton";
-import { RadioButton } from "@/components/design-system/forms/RadioButton";
 import { Slider } from "@/components/design-system/forms/Slider";
-import { Switch } from "@/components/design-system/forms/Switch";
 import { getUniqueCities } from "@/mock/places";
 import type { ExploreFilterState } from "@/features/explore/hooks/useExploreFilters";
 
 const cityOptions = getUniqueCities().map((c) => ({ value: c, label: c }));
-
-const travelStyleOptions = Object.values(TRAVEL_STYLE).map((v) => ({
-  value: v,
-  label: TRAVEL_STYLE_LABELS[v],
-}));
 
 function SidebarSection({
   title,
@@ -87,16 +76,10 @@ type ExploreSidebarProps = Pick<
   | "setSelectedCrowdLevels"
   | "selectedTargetGroups"
   | "setSelectedTargetGroups"
-  | "selectedStyle"
-  | "setSelectedStyle"
   | "selectedCategories"
   | "setSelectedCategories"
-  | "foodAvailable"
-  | "setFoodAvailable"
   | "selectedFoodTypes"
   | "setSelectedFoodTypes"
-  | "selectedCuisines"
-  | "setSelectedCuisines"
   | "resetFilters"
 >;
 
@@ -121,16 +104,10 @@ export function ExploreSidebar({
   setSelectedCrowdLevels,
   selectedTargetGroups,
   setSelectedTargetGroups,
-  selectedStyle,
-  setSelectedStyle,
   selectedCategories,
   setSelectedCategories,
-  foodAvailable,
-  setFoodAvailable,
   selectedFoodTypes,
   setSelectedFoodTypes,
-  selectedCuisines,
-  setSelectedCuisines,
   resetFilters,
 }: ExploreSidebarProps) {
   return (
@@ -233,73 +210,27 @@ export function ExploreSidebar({
 
       <Divider />
 
-      {/* Travel Style */}
-      <SidebarSection title="Styl podróży">
-        <RadioButton
-          value={selectedStyle ?? ""}
-          onChange={(v) =>
-            setSelectedStyle(v === "" ? undefined : (v as TRAVEL_STYLE))
-          }
-          options={[{ value: "", label: "Dowolny" }, ...travelStyleOptions]}
-          className="flex-row flex-wrap gap-2"
-        />
-      </SidebarSection>
-
-      <Divider />
-
-      {/* Interest Categories */}
-      <SidebarSection title="Zainteresowania">
+      <SidebarSection title="Typ miejsca">
         <ChipGroup
-          options={Object.values(INTEREST_CATEGORY).map((v) => ({
-            value: v,
-            label: INTEREST_CATEGORY_LABELS[v],
-          }))}
-          selected={selectedCategories}
-          onToggle={(v) =>
-            toggleItem(v, selectedCategories, setSelectedCategories)
-          }
+          options={[
+            ...Object.values(FOOD_TYPE)
+              .filter((v) => v !== FOOD_TYPE.NONE)
+              .map((v) => ({ value: v, label: FOOD_TYPE_LABELS[v] })),
+            ...Object.values(INTEREST_CATEGORY).map((v) => ({
+              value: v,
+              label: INTEREST_CATEGORY_LABELS[v],
+            })),
+          ]}
+          selected={[...selectedFoodTypes, ...selectedCategories]}
+          onToggle={(v) => {
+            if (selectedFoodTypes.includes(v)) {
+              toggleItem(v, selectedFoodTypes, setSelectedFoodTypes);
+            } else {
+              toggleItem(v, selectedCategories, setSelectedCategories);
+            }
+          }}
         />
       </SidebarSection>
-
-      <Divider />
-
-      {/* Food */}
-      <SidebarSection title="Jedzenie">
-        <div className="flex items-center gap-3">
-          <Switch checked={foodAvailable} onChange={setFoodAvailable} />
-          <span className="text-sm text-contentSecondary">
-            Uwzględnij jedzenie
-          </span>
-        </div>
-      </SidebarSection>
-
-      {foodAvailable && (
-        <>
-          <SidebarSection title="Typ lokalu">
-            <ChipGroup
-              options={Object.values(FOOD_TYPE)
-                .filter((v) => v !== FOOD_TYPE.NONE)
-                .map((v) => ({ value: v, label: FOOD_TYPE_LABELS[v] }))}
-              selected={selectedFoodTypes}
-              onToggle={(v) =>
-                toggleItem(v, selectedFoodTypes, setSelectedFoodTypes)
-              }
-            />
-          </SidebarSection>
-
-          <SidebarSection title="Rodzaj kuchni">
-            <ChipGroup
-              options={Object.values(CUISINE_TYPE)
-                .filter((v) => v !== CUISINE_TYPE.NONE)
-                .map((v) => ({ value: v, label: CUISINE_TYPE_LABELS[v] }))}
-              selected={selectedCuisines}
-              onToggle={(v) =>
-                toggleItem(v, selectedCuisines, setSelectedCuisines)
-              }
-            />
-          </SidebarSection>
-        </>
-      )}
     </aside>
   );
 }
