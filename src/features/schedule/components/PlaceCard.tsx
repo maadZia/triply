@@ -8,6 +8,7 @@ interface PlaceCardProps {
   index: number;
   onRemove?: () => void;
   onReorder?: () => void;
+  onDetailsClick?: () => void;
 }
 
 export function PlaceCard({
@@ -15,6 +16,7 @@ export function PlaceCard({
   index,
   onRemove,
   onReorder,
+  onDetailsClick,
 }: PlaceCardProps) {
   const actionButtons = (
     <>
@@ -52,6 +54,7 @@ export function PlaceCard({
         description={place.description}
         img={place.mainImage}
         actionButtons={actionButtons}
+        onDetailsClick={onDetailsClick}
       />
     </div>
   );

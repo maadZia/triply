@@ -2,84 +2,41 @@ import { useState } from "react";
 import { ExpandableCard } from "@/components/design-system/cards/ExpandableCard";
 import { PlaceCardVertical } from "@/components/shared/PlaceCard/PlaceCardVertical";
 import { HeartButton } from "@/components/design-system/atoms/icons/HeartButton";
+import {
+  PlaceDetailsDialog,
+  type Place,
+} from "@/components/shared/PlaceDetails/PlaceDetailsDialog";
+import { allPlaces } from "@/mock/places";
+import { toDialogPlace, type Attraction } from "@/utils/placeMapper";
+type Group = {
+  city: string;
+  defaultOpen: boolean;
+  attractions: Attraction[];
+};
 
 // Mock data — resets on page reload
-const INITIAL_PLACES = [
+const INITIAL_PLACES: Group[] = [
   {
     city: "Paryż",
     defaultOpen: false,
-    attractions: [
-      {
-        id: "paris-1",
-        title: "Wieża Eiffla",
-        description:
-          "Ikoniczny metalowy wieżowiec na Champ de Mars – symbol Paryża i całej Francji.",
-        img: "/eifell.jpeg",
-        rating: { score: 4.7, reviews: 45230 },
-      },
-      {
-        id: "paris-2",
-        title: "Luwr",
-        description:
-          "Największe muzeum sztuki na świecie, dom Mony Lisy i tysięcy innych arcydzieł.",
-        img: "places/paris/louvre.jpg",
-        rating: { score: 4.8, reviews: 38290 },
-      },
-      {
-        id: "paris-3",
-        title: "Katedra Notre-Dame",
-        description:
-          "Zabytkowa katedra gotycka, jedna z najbardziej znanych świątyń na świecie.",
-        img: "places/paris/notre.jpg",
-        rating: { score: 4.7, reviews: 28450 },
-      },
-      {
-        id: "paris-4",
-        title: "Pola Elizejskie",
-        description:
-          "Słynna paryska aleja pełna luksusowych sklepów, kawiarni i teatrów, łącząca Plac Zgody z Łukiem Triumfalnym.",
-        img: "places/paris/pola_elizejskie.jpg",
-        rating: { score: 4.6, reviews: 32180 },
-      },
-      {
-        id: "paris-5",
-        title: "Bazylika Sacré-Cœur",
-        description:
-          "Biała bazylika na szczycie wzgórza Montmartre, skąd roztacza się zapierający dech w piersiach widok na cały Paryż.",
-        img: "places/paris/sacre-couer.jpg",
-        rating: { score: 4.7, reviews: 29860 },
-      },
-      {
-        id: "paris-6",
-        title: "Montmartre",
-        description:
-          "Historyczna dzielnica artystów, pełna wąskich brukowanych uliczek, urokliwych kawiarni i malarzy ulicznych.",
-        img: "places/paris/montmare.jpeg",
-        rating: { score: 4.8, reviews: 15640 },
-      },
-    ],
+    attractions: allPlaces
+      .filter((p) => p.city === "Paryż")
+      .slice(0, 6)
+      .map(toDialogPlace),
   },
   {
     city: "Kraków",
     defaultOpen: false,
-    attractions: [
-      {
-        id: "krakow-1",
-        title: "Zamek Królewski na Wawelu",
-        description:
-          "Jeden z najważniejszych zabytków Polski, będący przez stulecia siedzibą królów.",
-        img: "places/cracow/wawel-4.png",
-        rating: { score: 4.9, reviews: 12540 },
-      },
-    ],
+    attractions: allPlaces
+      .filter((p) => p.city === "Kraków")
+      .slice(0, 1)
+      .map(toDialogPlace),
   },
 ];
 
-type Attraction = (typeof INITIAL_PLACES)[number]["attractions"][number];
-type Group = { city: string; defaultOpen: boolean; attractions: Attraction[] };
-
 export function PlacesSection() {
   const [groups, setGroups] = useState<Group[]>(INITIAL_PLACES);
+  const [selectedPlace, setSelectedPlace] = useState<Place | undefined>();
 
   const handleUnheart = (city: string, attractionId: string) => {
     setGroups((prev) =>
@@ -111,6 +68,7 @@ export function PlacesSection() {
                   description={place.description}
                   img={place.img}
                   rating={place.rating}
+                  onDetailsClick={() => setSelectedPlace(place)}
                   actionButtons={
                     <HeartButton
                       defaultLiked={true}
@@ -125,6 +83,12 @@ export function PlacesSection() {
           </div>
         </ExpandableCard>
       ))}
+
+      <PlaceDetailsDialog
+        place={selectedPlace}
+        open={!!selectedPlace}
+        onClose={() => setSelectedPlace(undefined)}
+      />
     </div>
   );
 }

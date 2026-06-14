@@ -7,6 +7,7 @@ import { DayContainer } from "./DayContainer";
 import { EmptyPlanState } from "./EmptyPlanState";
 import { PlaceDetailsDialog } from "@/components/shared/PlaceDetails/PlaceDetailsDialog";
 import { getPlacesByCity } from "@/mock/places";
+import { toDialogPlace } from "@/utils/placeMapper";
 import type { MapMarker } from "@/components/design-system/atoms/Map";
 import {
   ExclamationTriangleIcon,
@@ -145,23 +146,17 @@ export function PlanView({ plan, isUnsaved, onSavePlan }: PlanViewProps) {
     setIsDialogOpen(false);
   };
 
+  const handleDetailsClick = (placeId: string) => {
+    const place = allCityPlaces.find((p) => p.id === placeId);
+    if (place) {
+      setSelectedPlace(place);
+      setIsDialogOpen(true);
+    }
+  };
+
   const placeForDialog = useMemo(() => {
     if (!selectedPlace) return undefined;
-    return {
-      title: selectedPlace.name,
-      description: selectedPlace.description,
-      img: selectedPlace.mainImage,
-      images: selectedPlace.images,
-      category: selectedPlace.categories[0],
-      rating: selectedPlace.rating,
-      hours: selectedPlace.hoursSummary,
-      location: selectedPlace.location.address,
-      price: {
-        normal: selectedPlace.price.normal,
-        reduced: selectedPlace.price.reduced ?? selectedPlace.price.normal,
-        currency: selectedPlace.price.currency,
-      },
-    };
+    return toDialogPlace(selectedPlace);
   }, [selectedPlace]);
 
   if (!editablePlan.days.length) {
@@ -255,7 +250,7 @@ export function PlanView({ plan, isUnsaved, onSavePlan }: PlanViewProps) {
           )}
         </div>
 
-        <DayContainer day={selectedDay} />
+        <DayContainer day={selectedDay} onDetailsClick={handleDetailsClick} />
       </section>
 
       {/* ── Column 3: Map ── */}

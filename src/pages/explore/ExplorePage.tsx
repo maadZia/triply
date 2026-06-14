@@ -7,33 +7,12 @@ import { ExploreSearchBar } from "@/features/explore/components/ExploreSearchBar
 import { ExploreResultsGrid } from "@/features/explore/components/ExploreResultsGrid";
 import { filterPlaces, allPlaces } from "@/mock/places";
 import type { Place as MockPlace } from "@/types/places";
-import {
-  PlaceDetailsDialog,
-  type Place as DialogPlace,
-} from "@/components/shared/PlaceDetails/PlaceDetailsDialog";
-
-function toDialogPlace(place: MockPlace): DialogPlace {
-  return {
-    title: place.name,
-    description: place.description,
-    img: place.mainImage,
-    images: place.images,
-    category: place.categories[0] ?? undefined,
-    rating: place.rating,
-    hours: place.hoursSummary,
-    location: place.location.address,
-    price: {
-      normal: place.price.normal,
-      reduced: place.price.reduced ?? 0,
-      currency: place.price.currency,
-    },
-  };
-}
+import { PlaceDetailsDialog } from "@/components/shared/PlaceDetails/PlaceDetailsDialog";
+import { toDialogPlace } from "@/utils/placeMapper";
 
 export default function ExplorePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedPlace, setSelectedPlace] = useState<MockPlace | undefined>();
-
 
   const filters = useExploreFilters();
 

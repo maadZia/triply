@@ -11,12 +11,14 @@ interface DayContainerProps {
   day: DayPlan;
   onRemovePlace?: (placeId: string) => void;
   onReorderPlace?: (placeId: string, direction: "up" | "down") => void;
+  onDetailsClick?: (placeId: string) => void;
 }
 
 export function DayContainer({
   day,
   onRemovePlace,
   onReorderPlace,
+  onDetailsClick,
 }: DayContainerProps) {
   const formattedDate = formatDateForDisplay(day.date);
 
@@ -59,6 +61,9 @@ export function DayContainer({
               onReorderPlace
                 ? () => onReorderPlace(place.id, index > 0 ? "up" : "down")
                 : undefined
+            }
+            onDetailsClick={
+              onDetailsClick ? () => onDetailsClick(place.id) : undefined
             }
           />
         ))}
