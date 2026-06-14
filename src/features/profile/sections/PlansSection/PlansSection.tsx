@@ -4,7 +4,7 @@ import { PlanCard } from "@/features/profile/sections/PlansSection/PlanCard";
 const PLANS = [
   {
     city: "Paryż",
-    defaultOpen: true,
+    defaultOpen: false,
     trips: [
       {
         id: "paris-1",
@@ -25,12 +25,48 @@ const PLANS = [
   {
     city: "Londyn",
     defaultOpen: false,
-    trips: [],
+    trips: [
+      {
+        id: "london-1",
+        title: "Klasyczny Londyn",
+        days: "4 dni",
+        tags: "Big Ben, Tower Bridge, Pałac",
+        img: "/places/london/bigben.jpg",
+      },
+      {
+        id: "london-2",
+        title: "Muzea i galerie",
+        days: "3 dni",
+        tags: "British Museum, National Gallery",
+        img: "/places/london/museum.jpg",
+      },
+    ],
   },
   {
     city: "Rzym",
     defaultOpen: false,
-    trips: [],
+    trips: [
+      {
+        id: "rome-1",
+        title: "Antyczne cuda",
+        days: "5 dni",
+        tags: "Koloseum, Forum, Panteon",
+        img: "/places/rome/colosseum.jpg",
+      },
+    ],
+  },
+  {
+    city: "Wenecja",
+    defaultOpen: false,
+    trips: [
+      {
+        id: "venice-1",
+        title: "Magiczna Wenecja",
+        days: "3 dni",
+        tags: "Gondole, Plac św. Marka, Karnawal",
+        img: "/places/venice/mark.jpg",
+      },
+    ],
   },
 ];
 
