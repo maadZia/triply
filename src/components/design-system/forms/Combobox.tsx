@@ -44,7 +44,9 @@ export function Combobox({
     <Headless.Combobox
       value={value}
       onChange={(v) => {
-        onChange(v);
+        if (v !== null) {
+          onChange(v);
+        }
       }}
     >
       <div className={cn("relative", className)}>

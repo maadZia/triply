@@ -30,7 +30,7 @@ export function GeneratingModal({
   const canClose = Boolean(error) && Boolean(onClose);
 
   return (
-    <Dialog open={isOpen} onClose={canClose ? onClose : () => {}}>
+    <Dialog open={isOpen} onClose={canClose && onClose ? onClose : () => {}}>
       <div className="flex flex-col items-center gap-6 p-2">
         {error ? (
           <>
