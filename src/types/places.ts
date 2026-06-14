@@ -20,6 +20,7 @@ export enum INTEREST_CATEGORY {
   NATURE = "natura",
   ARCHITECTURE = "architektura",
   ENTERTAINMENT = "rozrywka",
+  FOOD = "jedzenie",
 }
 
 export enum TARGET_GROUP {
@@ -151,6 +152,7 @@ export const INTEREST_CATEGORY_LABELS: Record<INTEREST_CATEGORY, string> = {
   [INTEREST_CATEGORY.NATURE]: "Natura",
   [INTEREST_CATEGORY.ARCHITECTURE]: "Architektura",
   [INTEREST_CATEGORY.ENTERTAINMENT]: "Rozrywka",
+  [INTEREST_CATEGORY.FOOD]: "Jedzenie",
 };
 
 export const TARGET_GROUP_LABELS: Record<TARGET_GROUP, string> = {

@@ -67,8 +67,14 @@ const cuisineOptions = Object.values(CUISINE_TYPE)
     label: CUISINE_TYPE_LABELS[value],
   }));
 
+import { useLocation } from "react-router-dom";
+
 export function FilterCard() {
   const { generatePlan, isGenerating } = useGeneratedPlan();
+  const location = useLocation();
+  const initialFilters = location.state?.filters as
+    | Partial<PlanFilters>
+    | undefined;
 
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -76,23 +82,45 @@ export function FilterCard() {
   const [modalError, setModalError] = useState<string | null>(null);
 
   // Local UI state
-  const [selectedCity, setSelectedCity] = useState<string>("");
-  const [selectedDays, setSelectedDays] = useState<number>(3);
-  const [startDate, setStartDate] = useState<string>("");
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
-  const [minRating, setMinRating] = useState<number>(4);
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 500]);
-  const [selectedCrowdLevels, setSelectedCrowdLevels] = useState<string[]>([]);
+  const [selectedCity, setSelectedCity] = useState<string>(
+    initialFilters?.city || "",
+  );
+  const [selectedDays, setSelectedDays] = useState<number>(
+    initialFilters?.days || 3,
+  );
+  const [startDate, setStartDate] = useState<string>(
+    initialFilters?.startDate || "",
+  );
+  const [selectedTypes, setSelectedTypes] = useState<string[]>(
+    initialFilters?.types || [],
+  );
+  const [minRating, setMinRating] = useState<number>(
+    initialFilters?.minRating || 4,
+  );
+  const [priceRange, setPriceRange] = useState<[number, number]>(
+    initialFilters?.priceRange || [0, 500],
+  );
+  const [selectedCrowdLevels, setSelectedCrowdLevels] = useState<string[]>(
+    initialFilters?.crowdLevels || [],
+  );
   const [selectedTargetGroups, setSelectedTargetGroups] = useState<string[]>(
-    [],
+    initialFilters?.targetGroups || [],
   );
   const [selectedStyle, setSelectedStyle] = useState<TRAVEL_STYLE>(
-    TRAVEL_STYLE.RELAXED,
+    initialFilters?.style || TRAVEL_STYLE.RELAXED,
   );
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [foodAvailable, setFoodAvailable] = useState<boolean>(false);
-  const [selectedFoodTypes, setSelectedFoodTypes] = useState<string[]>([]);
-  const [selectedCuisines, setSelectedCuisines] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(
+    initialFilters?.categories || [],
+  );
+  const [foodAvailable, setFoodAvailable] = useState<boolean>(
+    initialFilters?.foodAvailable || false,
+  );
+  const [selectedFoodTypes, setSelectedFoodTypes] = useState<string[]>(
+    initialFilters?.foodTypes || [],
+  );
+  const [selectedCuisines, setSelectedCuisines] = useState<string[]>(
+    initialFilters?.cuisines || [],
+  );
 
   const toggleArrayValue = (
     value: string,

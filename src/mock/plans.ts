@@ -7,30 +7,36 @@ import {
   TARGET_GROUP,
 } from "@/types/places";
 
+import { allPlaces } from "@/mock/places";
+
 // Helper do konwersji Place na PlanPlace
 function toPlanPlace(
   id: string,
-  name: string,
-  description: string,
-  mainImage: string,
-  rating: { score: number; reviews: number },
-  location: { address: string; lat: number; lng: number },
-  price: { normal: number; currency: string },
-  estimatedVisitTime: number,
-  type: PLACE_TYPE,
-  categories: INTEREST_CATEGORY[],
+  estimatedVisitTimeOverride?: number,
 ): PlanPlace {
+  const realPlace = allPlaces.find((p) => p.id === id);
+  if (!realPlace) {
+    throw new Error(`Place ${id} not found in allPlaces!`);
+  }
   return {
-    id,
-    name,
-    description,
-    mainImage,
-    rating,
-    location,
-    price,
-    estimatedVisitTime,
-    type,
-    categories,
+    id: realPlace.id,
+    name: realPlace.name,
+    description: realPlace.description, // Pełny opis, bez uciętych "..."
+    mainImage: realPlace.mainImage,
+    rating: realPlace.rating,
+    location: {
+      address: realPlace.location.address,
+      lat: realPlace.location.coordinates?.lat ?? 0,
+      lng: realPlace.location.coordinates?.lng ?? 0,
+    },
+    price: {
+      normal: realPlace.price.normal,
+      currency: realPlace.price.currency,
+    },
+    estimatedVisitTime:
+      estimatedVisitTimeOverride ?? realPlace.estimatedVisitTime ?? 120,
+    type: realPlace.type,
+    categories: realPlace.categories,
   };
 }
 
@@ -43,58 +49,9 @@ const mockKrakowPlan: GeneratedPlan = {
       day: 1,
       date: "2024-06-15",
       places: [
-        toPlanPlace(
-          "krk-001",
-          "Zamek Królewski na Wawelu",
-          "Zamek na Wawelu to jeden z najważniejszych zabytków Polski...",
-          "./places/cracow/wawel-1.png",
-          { score: 4.9, reviews: 12540 },
-          { address: "Wawel 5, 31-001 Kraków", lat: 50.0541, lng: 19.9352 },
-          { normal: 30, currency: "PLN" },
-          180,
-          PLACE_TYPE.INDOOR,
-          [INTEREST_CATEGORY.HISTORY, INTEREST_CATEGORY.ARCHITECTURE],
-        ),
-        toPlanPlace(
-          "krk-002",
-          "Rynek Główny",
-          "Rynek Główny w Krakowie to jeden z największych placów w Europie...",
-          "./places/cracow/rynek-1.png",
-          { score: 4.8, reviews: 15420 },
-          {
-            address: "Rynek Główny, 31-042 Kraków",
-            lat: 50.0614,
-            lng: 19.9372,
-          },
-          { normal: 0, currency: "PLN" },
-          120,
-          PLACE_TYPE.OUTDOOR,
-          [
-            INTEREST_CATEGORY.HISTORY,
-            INTEREST_CATEGORY.ARCHITECTURE,
-            INTEREST_CATEGORY.ENTERTAINMENT,
-          ],
-        ),
-        toPlanPlace(
-          "krk-009",
-          "Kościół Mariacki",
-          "Gotycka bazylika z XIV wieku, dominująca nad Rynkiem Głównym...",
-          "./places/cracow/mariacki-1.png",
-          { score: 4.8, reviews: 7650 },
-          {
-            address: "Plac Mariacki 5, 31-042 Kraków",
-            lat: 50.0616,
-            lng: 19.9393,
-          },
-          { normal: 15, currency: "PLN" },
-          45,
-          PLACE_TYPE.INDOOR,
-          [
-            INTEREST_CATEGORY.HISTORY,
-            INTEREST_CATEGORY.ART,
-            INTEREST_CATEGORY.ARCHITECTURE,
-          ],
-        ),
+        toPlanPlace("krk-001", 180),
+        toPlanPlace("krk-002", 120),
+        toPlanPlace("krk-009", 45),
       ],
       stats: {
         totalPlaces: 3,
@@ -107,50 +64,9 @@ const mockKrakowPlan: GeneratedPlan = {
       day: 2,
       date: "2024-06-16",
       places: [
-        toPlanPlace(
-          "krk-005",
-          "Kazimierz - Dzielnica Żydowska",
-          "Historyczna dzielnica Kazimierz to dusza alternatywnego Krakowa...",
-          "./places/cracow/kazimierz-1.png",
-          { score: 4.6, reviews: 9870 },
-          { address: "Kazimierz, Kraków", lat: 50.0484, lng: 19.9444 },
-          { normal: 0, currency: "PLN" },
-          180,
-          PLACE_TYPE.OUTDOOR,
-          [
-            INTEREST_CATEGORY.HISTORY,
-            INTEREST_CATEGORY.ENTERTAINMENT,
-            INTEREST_CATEGORY.ARCHITECTURE,
-          ],
-        ),
-        toPlanPlace(
-          "krk-008",
-          "Muzeum Sztuki i Techniki Japońskiej Manggha",
-          "Jedyne w Polsce muzeum poświęcone sztuce i technice japońskiej...",
-          "./places/cracow/manggha-1.png",
-          { score: 4.5, reviews: 1680 },
-          {
-            address: "Marii Konopnickiej 26, 30-302 Kraków",
-            lat: 50.0495,
-            lng: 19.9323,
-          },
-          { normal: 20, currency: "PLN" },
-          90,
-          PLACE_TYPE.INDOOR,
-          [INTEREST_CATEGORY.ART, INTEREST_CATEGORY.HISTORY],
-        ),
-        toPlanPlace(
-          "krk-010",
-          "Bulwary Wiślane",
-          "Miejsce spotkań krakowian i turystów nad Wisłą...",
-          "./places/cracow/bulwary-1.png",
-          { score: 4.5, reviews: 4320 },
-          { address: "Bulwary Wiślane, Kraków", lat: 50.048, lng: 19.936 },
-          { normal: 0, currency: "PLN" },
-          90,
-          PLACE_TYPE.OUTDOOR,
-          [INTEREST_CATEGORY.NATURE, INTEREST_CATEGORY.ENTERTAINMENT],
-        ),
+        toPlanPlace("krk-005", 180),
+        toPlanPlace("krk-008", 90),
+        toPlanPlace("krk-010", 90),
       ],
       stats: {
         totalPlaces: 3,
@@ -162,24 +78,7 @@ const mockKrakowPlan: GeneratedPlan = {
     {
       day: 3,
       date: "2024-06-17",
-      places: [
-        toPlanPlace(
-          "krk-003",
-          "Kopalnia Soli 'Wieliczka'",
-          "UNESCO World Heritage Site - jedna z najstarszych kopalni soli...",
-          "./places/cracow/wieliczka-1.png",
-          { score: 4.8, reviews: 8920 },
-          {
-            address: "Daniłowicza 10, 32-020 Wieliczka",
-            lat: 49.9829,
-            lng: 20.0556,
-          },
-          { normal: 89, currency: "PLN" },
-          150,
-          PLACE_TYPE.INDOOR,
-          [INTEREST_CATEGORY.HISTORY, INTEREST_CATEGORY.NATURE],
-        ),
-      ],
+      places: [toPlanPlace("krk-003", 150)],
       stats: {
         totalPlaces: 1,
         totalTime: 150,
@@ -223,40 +122,7 @@ const mockParisPlan: GeneratedPlan = {
     {
       day: 1,
       date: "2024-07-20",
-      places: [
-        toPlanPlace(
-          "paris-001",
-          "Wieża Eiffla",
-          "Symbol Paryża i jedna z najbardziej rozpoznawalnych budowli świata...",
-          "./places/paris/eiffel-1.png",
-          { score: 4.7, reviews: 45000 },
-          {
-            address: "Champ de Mars, 5 Av. Anatole France, 75007 Paris",
-            lat: 48.8584,
-            lng: 2.2945,
-          },
-          { normal: 25, currency: "EUR" },
-          120,
-          PLACE_TYPE.OUTDOOR,
-          [INTEREST_CATEGORY.ARCHITECTURE, INTEREST_CATEGORY.HISTORY],
-        ),
-        toPlanPlace(
-          "paris-002",
-          "Luwr",
-          "Największe muzeum sztuki na świecie...",
-          "./places/paris/louvre-1.png",
-          { score: 4.8, reviews: 38000 },
-          { address: "Rue de Rivoli, 75001 Paris", lat: 48.8606, lng: 2.3376 },
-          { normal: 17, currency: "EUR" },
-          180,
-          PLACE_TYPE.INDOOR,
-          [
-            INTEREST_CATEGORY.ART,
-            INTEREST_CATEGORY.HISTORY,
-            INTEREST_CATEGORY.ARCHITECTURE,
-          ],
-        ),
-      ],
+      places: [toPlanPlace("par-001", 120), toPlanPlace("par-002", 180)],
       stats: {
         totalPlaces: 2,
         totalTime: 300,
@@ -264,11 +130,33 @@ const mockParisPlan: GeneratedPlan = {
         centerPoint: { lat: 48.8595, lng: 2.316 },
       },
     },
+    {
+      day: 2,
+      date: "2024-07-21",
+      places: [toPlanPlace("par-003", 60), toPlanPlace("par-004", 120)],
+      stats: {
+        totalPlaces: 2,
+        totalTime: 180,
+        totalPrice: 20,
+        centerPoint: { lat: 48.86, lng: 2.33 },
+      },
+    },
+    {
+      day: 3,
+      date: "2024-07-22",
+      places: [toPlanPlace("par-005", 150), toPlanPlace("par-006", 180)],
+      stats: {
+        totalPlaces: 2,
+        totalTime: 330,
+        totalPrice: 40,
+        centerPoint: { lat: 48.87, lng: 2.32 },
+      },
+    },
   ],
   createdAt: new Date("2024-07-15"),
   filters: {
     city: "Paryż",
-    days: 1,
+    days: 3,
     startDate: "2024-07-20",
     types: [],
     minRating: 4.0,
@@ -282,13 +170,137 @@ const mockParisPlan: GeneratedPlan = {
     cuisines: [],
   },
   stats: {
-    totalPlaces: 2,
-    totalDays: 1,
-    totalPrice: 42,
+    totalPlaces: 6,
+    totalDays: 3,
+    totalPrice: 102,
   },
 };
 
-const mockPlans: GeneratedPlan[] = [mockKrakowPlan, mockParisPlan];
+const mockParisPlan2: GeneratedPlan = {
+  id: "mock-paris-002",
+  city: "Paryż",
+  days: [
+    {
+      day: 1,
+      date: "2024-08-10",
+      places: [
+        toPlanPlace("par-003", 60),
+        toPlanPlace("par-006", 180),
+        toPlanPlace("par-009", 90),
+      ],
+      stats: {
+        totalPlaces: 3,
+        totalTime: 330,
+        totalPrice: 29,
+        centerPoint: { lat: 48.853, lng: 2.3408 },
+      },
+    },
+    {
+      day: 2,
+      date: "2024-08-11",
+      places: [toPlanPlace("par-001", 120), toPlanPlace("par-007", 90)],
+      stats: {
+        totalPlaces: 2,
+        totalTime: 210,
+        totalPrice: 35,
+        centerPoint: { lat: 48.86, lng: 2.32 },
+      },
+    },
+  ],
+  createdAt: new Date("2024-07-20"),
+  filters: {
+    city: "Paryż",
+    days: 2,
+    startDate: "2024-08-10",
+    types: [],
+    minRating: 4.0,
+    priceRange: [0, 100],
+    crowdLevels: [],
+    targetGroups: [],
+    style: TRAVEL_STYLE.RELAXED,
+    categories: [INTEREST_CATEGORY.ART, INTEREST_CATEGORY.ARCHITECTURE],
+    foodAvailable: false,
+    foodTypes: [],
+    cuisines: [],
+  },
+  stats: {
+    totalPlaces: 5,
+    totalDays: 2,
+    totalPrice: 64,
+  },
+};
+
+const mockKrakowPlan2: GeneratedPlan = {
+  id: "mock-krakow-002",
+  city: "Kraków",
+  days: [
+    {
+      day: 1,
+      date: "2024-09-01",
+      places: [
+        toPlanPlace("krk-010", 120),
+        toPlanPlace("krk-006", 120),
+        toPlanPlace("krk-007", 90),
+      ],
+      stats: {
+        totalPlaces: 3,
+        totalTime: 330,
+        totalPrice: 180,
+        centerPoint: { lat: 50.0669, lng: 19.9625 },
+      },
+    },
+    {
+      day: 2,
+      date: "2024-09-02",
+      places: [toPlanPlace("krk-001", 180), toPlanPlace("krk-002", 120)],
+      stats: {
+        totalPlaces: 2,
+        totalTime: 300,
+        totalPrice: 30,
+        centerPoint: { lat: 50.06, lng: 19.93 },
+      },
+    },
+    {
+      day: 3,
+      date: "2024-09-03",
+      places: [toPlanPlace("krk-003", 150), toPlanPlace("krk-004", 60)],
+      stats: {
+        totalPlaces: 2,
+        totalTime: 210,
+        totalPrice: 89,
+        centerPoint: { lat: 50.0, lng: 20.0 },
+      },
+    },
+  ],
+  createdAt: new Date("2024-08-15"),
+  filters: {
+    city: "Kraków",
+    days: 3,
+    startDate: "2024-09-01",
+    types: [],
+    minRating: 4.0,
+    priceRange: [0, 500],
+    crowdLevels: [],
+    targetGroups: [],
+    style: TRAVEL_STYLE.RELAXED,
+    categories: [INTEREST_CATEGORY.FOOD],
+    foodAvailable: true,
+    foodTypes: [],
+    cuisines: [],
+  },
+  stats: {
+    totalPlaces: 7,
+    totalDays: 3,
+    totalPrice: 299,
+  },
+};
+
+const mockPlans: GeneratedPlan[] = [
+  mockKrakowPlan,
+  mockKrakowPlan2,
+  mockParisPlan,
+  mockParisPlan2,
+];
 
 // Pobierz mock plan po ID
 export function getMockPlanById(id: string): GeneratedPlan | null {
@@ -303,7 +315,7 @@ export function getMockPlansForUser(): GeneratedPlan[] {
 
 // Future: funkcja do zapisywania planu
 export async function savePlanToBackend(): Promise<{
-// _plan: GeneratedPlan
+  // _plan: GeneratedPlan
   success: boolean;
   id?: string;
   error?: string;
