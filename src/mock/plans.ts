@@ -288,7 +288,188 @@ const mockParisPlan: GeneratedPlan = {
   },
 };
 
-const mockPlans: GeneratedPlan[] = [mockKrakowPlan, mockParisPlan];
+const mockParisPlan2: GeneratedPlan = {
+  id: "mock-paris-002",
+  city: "Paryż",
+  days: [
+    {
+      day: 1,
+      date: "2024-08-10",
+      places: [
+        toPlanPlace(
+          "paris-003",
+          "Katedra Notre-Dame",
+          "Zabytkowa katedra gotycka...",
+          "./places/paris/notre.jpg",
+          { score: 4.7, reviews: 28450 },
+          {
+            address: "6 Parvis Notre-Dame - Pl. Jean-Paul II, 75004 Paris",
+            lat: 48.8529,
+            lng: 2.3499,
+          },
+          { normal: 0, currency: "EUR" },
+          60,
+          PLACE_TYPE.INDOOR,
+          [INTEREST_CATEGORY.ARCHITECTURE, INTEREST_CATEGORY.HISTORY],
+        ),
+        toPlanPlace(
+          "paris-006",
+          "Muzeum Orsay",
+          "Dawny dworzec kolejowy zamieniony w muzeum sztuki impresjonistycznej...",
+          "./places/paris/orsay-1.png",
+          { score: 4.8, reviews: 15640 },
+          {
+            address: "1 Rue de la Légion d'Honneur, 75007 Paris",
+            lat: 48.86,
+            lng: 2.3267,
+          },
+          { normal: 16, currency: "EUR" },
+          180,
+          PLACE_TYPE.INDOOR,
+          [INTEREST_CATEGORY.ART, INTEREST_CATEGORY.HISTORY],
+        ),
+        toPlanPlace(
+          "paris-009",
+          "Panteon",
+          "Neoklasycystyczny mauzoleum, pierwotnie planowane jako kościół...",
+          "./places/paris/pantheon-1.png",
+          { score: 4.5, reviews: 8930 },
+          {
+            address: "Pl. du Panthéon, 75005 Paris",
+            lat: 48.8462,
+            lng: 2.3458,
+          },
+          { normal: 13, currency: "EUR" },
+          90,
+          PLACE_TYPE.INDOOR,
+          [INTEREST_CATEGORY.HISTORY, INTEREST_CATEGORY.ARCHITECTURE],
+        ),
+      ],
+      stats: {
+        totalPlaces: 3,
+        totalTime: 330,
+        totalPrice: 29,
+        centerPoint: { lat: 48.853, lng: 2.3408 },
+      },
+    },
+  ],
+  createdAt: new Date("2024-07-20"),
+  filters: {
+    city: "Paryż",
+    days: 1,
+    startDate: "2024-08-10",
+    types: [],
+    minRating: 4.0,
+    priceRange: [0, 100],
+    crowdLevels: [],
+    targetGroups: [],
+    style: TRAVEL_STYLE.RELAXED,
+    categories: [INTEREST_CATEGORY.ART, INTEREST_CATEGORY.ARCHITECTURE],
+    foodAvailable: false,
+    foodTypes: [],
+    cuisines: [],
+  },
+  stats: {
+    totalPlaces: 3,
+    totalDays: 1,
+    totalPrice: 29,
+  },
+};
+
+const mockKrakowPlan2: GeneratedPlan = {
+  id: "mock-krakow-002",
+  city: "Kraków",
+  days: [
+    {
+      day: 1,
+      date: "2024-09-01",
+      places: [
+        toPlanPlace(
+          "krk-012",
+          "Restauracja Wierzynek",
+          "Jedna z najstarszych i najbardziej prestiżowych restauracji w Polsce...",
+          "./places/cracow/wierzynek-1.png",
+          { score: 4.5, reviews: 3200 },
+          {
+            address: "Rynek Główny 16, 31-008 Kraków",
+            lat: 50.0611,
+            lng: 19.9365,
+          },
+          { normal: 150, currency: "PLN" },
+          120,
+          PLACE_TYPE.INDOOR,
+          [INTEREST_CATEGORY.FOOD],
+        ),
+        toPlanPlace(
+          "krk-006",
+          "Muzeum Lotnictwa Polskiego",
+          "Jedno z najlepszych muzeów lotnictwa w Europie...",
+          "./places/cracow/lotnictwo-1.png",
+          { score: 4.7, reviews: 2150 },
+          {
+            address: "Aleja Jana Pawła II 39, 31-864 Kraków",
+            lat: 50.0773,
+            lng: 19.9917,
+          },
+          { normal: 18, currency: "PLN" },
+          120,
+          PLACE_TYPE.OUTDOOR,
+          [INTEREST_CATEGORY.HISTORY, INTEREST_CATEGORY.ENTERTAINMENT],
+        ),
+        toPlanPlace(
+          "krk-007",
+          "Ogród Botaniczny Uniwersytetu Jagiellońskiego",
+          "Najstarszy ogród botaniczny w Polski (założony 1783)...",
+          "./places/cracow/ogrod-1.png",
+          { score: 4.6, reviews: 1840 },
+          {
+            address: "Mikołaja Kopernika 27, 31-501 Kraków",
+            lat: 50.0623,
+            lng: 19.9593,
+          },
+          { normal: 12, currency: "PLN" },
+          90,
+          PLACE_TYPE.OUTDOOR,
+          [INTEREST_CATEGORY.NATURE],
+        ),
+      ],
+      stats: {
+        totalPlaces: 3,
+        totalTime: 330,
+        totalPrice: 180,
+        centerPoint: { lat: 50.0669, lng: 19.9625 },
+      },
+    },
+  ],
+  createdAt: new Date("2024-08-15"),
+  filters: {
+    city: "Kraków",
+    days: 1,
+    startDate: "2024-09-01",
+    types: [],
+    minRating: 4.0,
+    priceRange: [0, 500],
+    crowdLevels: [],
+    targetGroups: [],
+    style: TRAVEL_STYLE.RELAXED,
+    categories: [INTEREST_CATEGORY.FOOD],
+    foodAvailable: true,
+    foodTypes: [],
+    cuisines: [],
+  },
+  stats: {
+    totalPlaces: 3,
+    totalDays: 1,
+    totalPrice: 180,
+  },
+};
+
+const mockPlans: GeneratedPlan[] = [
+  mockKrakowPlan,
+  mockKrakowPlan2,
+  mockParisPlan,
+  mockParisPlan2,
+];
 
 // Pobierz mock plan po ID
 export function getMockPlanById(id: string): GeneratedPlan | null {
@@ -303,7 +484,7 @@ export function getMockPlansForUser(): GeneratedPlan[] {
 
 // Future: funkcja do zapisywania planu
 export async function savePlanToBackend(): Promise<{
-// _plan: GeneratedPlan
+  // _plan: GeneratedPlan
   success: boolean;
   id?: string;
   error?: string;

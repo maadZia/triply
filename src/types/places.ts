@@ -20,6 +20,7 @@ export enum INTEREST_CATEGORY {
   NATURE = "natura",
   ARCHITECTURE = "architektura",
   ENTERTAINMENT = "rozrywka",
+  FOOD = "jedzenie",
 }
 
 export enum TARGET_GROUP {

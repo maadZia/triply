@@ -1,13 +1,17 @@
+import { useState } from "react";
 import { ExpandableCard } from "@/components/design-system/cards/ExpandableCard";
 import { PlanCard } from "@/features/profile/sections/PlansSection/PlanCard";
 
-const PLANS = [
+// Mock data — resets on page reload. London and Rome removed (empty).
+// planId maps each trip to its GeneratedPlan in mock/plans.ts → /schedule/:planId
+const INITIAL_PLANS = [
   {
     city: "Paryż",
     defaultOpen: false,
     trips: [
       {
         id: "paris-1",
+        planId: "mock-paris-001",
         title: "Weekend w Paryżu",
         days: "3 dni",
         tags: "Relaks i sztuka",
@@ -15,6 +19,7 @@ const PLANS = [
       },
       {
         id: "paris-2",
+        planId: "mock-paris-002",
         title: "Śladami sztuki",
         days: "5 dni",
         tags: "Luwr, d'Orsay, Montmartre",
@@ -23,80 +28,71 @@ const PLANS = [
     ],
   },
   {
-    city: "Londyn",
+    city: "Kraków",
     defaultOpen: false,
     trips: [
       {
-        id: "london-1",
-        title: "Klasyczny Londyn",
-        days: "4 dni",
-        tags: "Big Ben, Tower Bridge, Pałac",
-        img: "/places/london/bigben.jpg",
+        id: "krakow-1",
+        planId: "mock-krakow-001",
+        title: "Królewskie Miasto",
+        days: "2 dni",
+        tags: "Wawel, Rynek, Kazimierz",
+        img: "/places/cracow/wawel-1.png",
       },
       {
-        id: "london-2",
-        title: "Muzea i galerie",
+        id: "krakow-2",
+        planId: "mock-krakow-002",
+        title: "Smak Krakowa",
         days: "3 dni",
-        tags: "British Museum, National Gallery",
-        img: "/places/london/museum.jpg",
-      },
-    ],
-  },
-  {
-    city: "Rzym",
-    defaultOpen: false,
-    trips: [
-      {
-        id: "rome-1",
-        title: "Antyczne cuda",
-        days: "5 dni",
-        tags: "Koloseum, Forum, Panteon",
-        img: "/places/rome/colosseum.jpg",
-      },
-    ],
-  },
-  {
-    city: "Wenecja",
-    defaultOpen: false,
-    trips: [
-      {
-        id: "venice-1",
-        title: "Magiczna Wenecja",
-        days: "3 dni",
-        tags: "Gondole, Plac św. Marka, Karnawal",
-        img: "/places/venice/mark.jpg",
+        tags: "Kuchnia, historia, kultura",
+        img: "/places/cracow/rynek-1.png",
       },
     ],
   },
 ];
 
+type Trip = (typeof INITIAL_PLANS)[number]["trips"][number];
+type Group = { city: string; defaultOpen: boolean; trips: Trip[] };
+
 export function PlansSection() {
+  const [groups, setGroups] = useState<Group[]>(INITIAL_PLANS);
+
+  const handleDelete = (city: string, tripId: string) => {
+    setGroups((prev) =>
+      prev
+        .map((group) => {
+          if (group.city !== city) return group;
+          return {
+            ...group,
+            trips: group.trips.filter((t) => t.id !== tripId),
+          };
+        })
+        // Remove groups that have no trips left
+        .filter((group) => group.trips.length > 0),
+    );
+  };
+
   return (
     <div className="flex flex-col gap-4">
-      {PLANS.map((group) => (
+      {groups.map((group) => (
         <ExpandableCard
           key={group.city}
           title={group.city}
           defaultOpen={group.defaultOpen}
         >
-          {group.trips.length > 0 ? (
-            <div className="flex flex-wrap gap-4">
-              {group.trips.map((trip) => (
-                <PlanCard
-                  key={trip.id}
-                  title={trip.title}
-                  days={trip.days}
-                  tags={trip.tags}
-                  img={trip.img}
-                  //to={} // add link to redirect on viewing a plan when it's implemented
-                />
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-contentSecondary">
-              Brak zapisanych planów dla tego miejsca.
-            </p>
-          )}
+          <div className="flex flex-wrap gap-4">
+            {group.trips.map((trip) => (
+              <PlanCard
+                key={trip.id}
+                title={trip.title}
+                days={trip.days}
+                tags={trip.tags}
+                img={trip.img}
+                to={`/schedule/${trip.planId}`}
+                onDelete={() => handleDelete(group.city, trip.id)}
+              />
+            ))}
+          </div>
         </ExpandableCard>
       ))}
     </div>
