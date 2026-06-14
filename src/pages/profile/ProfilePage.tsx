@@ -4,7 +4,7 @@ import { useAuth } from "@/providers/AuthContext";
 import { useSearchParams } from "react-router-dom";
 import { PlansSection } from "@/features/profile/sections/PlansSection/PlansSection";
 import { PlacesSection } from "@/features/profile/sections/PlacesSection";
-import { PreferencesSection } from "@/features/profile/sections/PreferencesSection";
+import { PreferencesSection } from "@/features/profile/sections/PreferencesSection/PreferencesSection";
 
 export default function ProfilePage() {
   const { user, loading } = useAuth();
