@@ -47,11 +47,11 @@ export default function HomePage() {
       title: "Rynek Główny",
       description:
         "Rynek Główny w Krakowie to jedno z największych i najpiękniejszych miast w Europie. W jego centrum znajduje się wspaniały Sukiennice z XVI wieku. Otoczony zabytkową zabudową, stanowi serce starego miasta i jest wpisany na listę światowego dziedzictwa UNESCO.",
-      img: "./places/cracow/wawel-1.png",
+      img: "./places/cracow/rynek-1.jpg",
       images: [
-        "./places/cracow/wawel-1.png",
-        "./places/cracow/wawel-1.png",
-        "./places/cracow/wawel-1.png",
+        "./places/cracow/rynek-1.jpg",
+        "./places/cracow/rynek-2.jpg",
+        "./places/cracow/rynek-3.jpg",
       ],
       category: "OBIEKTY ZABYTKOWE",
       rating: {
@@ -70,8 +70,11 @@ export default function HomePage() {
       title: "Kazimierz",
       description:
         "Historyczna dzielnica Kazimierz przyciąga artystów, turystów i miłośników kultury. To miejsce pełne galerii, kawiarenek i restauracji, gdzie historia żydowska przeplatana jest współczesną sztuką. Bożnice, synagogi i stare domy tworzą wyjątkową atmosferę.",
-      img: "./places/cracow/wawel-1.png",
-      images: ["./places/cracow/wawel-1.png", "./places/cracow/wawel-1.png"],
+      img: "./places/cracow/kazimierz-1.jpg",
+      images: [
+        "./places/cracow/kazimierz-1.jpg",
+        "./places/cracow/kazimierz-2.jpg",
+      ],
       category: "DZIELNICE",
       rating: {
         score: 4.6,
