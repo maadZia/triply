@@ -57,6 +57,7 @@ export interface DayPlan {
 
 export interface GeneratedPlan {
   id: string; // 'generated' lub UUID
+  name?: string; // nazwa planu (opcjonalna dla nowych planów)
   city: string;
   days: DayPlan[];
   createdAt: Date;
