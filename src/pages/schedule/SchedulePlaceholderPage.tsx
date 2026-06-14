@@ -40,8 +40,10 @@ export default function SchedulePlaceholderPage() {
         <div className="rounded-lg border border-gray-200 bg-white p-4">
           <H3 className="mb-2 text-base">Jak to działa?</H3>
           <P1 className="text-sm text-contentSecondary">
-            1. Wybierz miasto i preferencje na stronie głównej{"\n"}
-            2. Nasz algorytm wygeneruje spersonalizowany plan{"\n"}
+            1. Wybierz miasto i preferencje na stronie głównej
+            <br />
+            2. Nasz algorytm wygeneruje spersonalizowany plan
+            <br />
             3. Przeglądaj atrakcje dzień po dniu
           </P1>
         </div>
@@ -49,8 +51,10 @@ export default function SchedulePlaceholderPage() {
         <div className="rounded-lg border border-gray-200 bg-white p-4">
           <H3 className="mb-2 text-base">Dlaczego warto?</H3>
           <P1 className="text-sm text-contentSecondary">
-            - Optymalne trasy geograficzne{"\n"}- Dopasowane do Twoich
-            zainteresowań{"\n"}- Oszczędność czasu na planowaniu
+            - Optymalne trasy geograficzne
+            <br />
+            - Dopasowane do Twoich zainteresowań
+            <br />- Oszczędność czasu na planowaniu
           </P1>
         </div>
       </div>

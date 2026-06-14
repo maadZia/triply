@@ -11,7 +11,7 @@ export default function ExplorePage() {
         <PlaceCardVertical
           title="Zamek królewski na Wawelu"
           description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-          img="./places/wawel-1.png"
+          img="./places/cracow/wawel-4.png"
           actionButtons={
             <>
               <Button className="mt-auto self-start px-0" plain>

@@ -7,49 +7,49 @@ import { Button } from "@/components/design-system/atoms/Button";
 const PLACES = [
   {
     city: "Paryż",
-    defaultOpen: true,
+    defaultOpen: false,
     attractions: [
       {
         id: "paris-1",
         title: "Wieża Eiffla",
         description:
           "Ikoniczny metalowy wieżowiec na Champ de Mars – symbol Paryża i całej Francji.",
-        img: "/eifell.jpeg",
+        img: "places/paris/eifell.jpeg",
       },
       {
         id: "paris-2",
         title: "Luwr",
         description:
           "Największe muzeum sztuki na świecie, dom Mony Lisy i tysięcy innych arcydzieł.",
-        img: "/louvre.jpg",
+        img: "places/paris/louvre.jpg",
       },
       {
         id: "paris-3",
         title: "Katedra Notre-Dame",
         description:
           "Zabytkowa katedra gotycka, jedna z najbardziej znanych świątyń na świecie.",
-        img: "/notre.jpg",
+        img: "places/paris/notre.jpg",
       },
       {
         id: "paris-4",
         title: "Pola Elizejskie",
         description:
           "Słynna paryska aleja pełna luksusowych sklepów, kawiarni i teatrów, łącząca Plac Zgody z Łukiem Triumfalnym.",
-        img: "/pola_elizejskie.jpg",
+        img: "places/paris/pola_elizejskie.jpg",
       },
       {
         id: "paris-5",
         title: "Bazylika Sacré-Cœur",
         description:
           "Biała bazylika na szczycie wzgórza Montmartre, skąd roztacza się zapierający dech w piersiach widok na cały Paryż.",
-        img: "/sacre-couer.jpg",
+        img: "places/paris/sacre-couer.jpg",
       },
       {
         id: "paris-4",
         title: "Montmartre",
         description:
           "Historyczna dzielnica artystów, pełna wąskich brukowanych uliczek, urokliwych kawiarni i malarzy ulicznych.",
-        img: "/montmare.jpeg",
+        img: "places/paris/montmare.jpeg",
       },
     ],
   },
@@ -62,7 +62,7 @@ const PLACES = [
         title: "Zamek Królewski na Wawelu",
         description:
           "Jeden z najważniejszych zabytków Polski, będący przez stulecia siedzibą królów.",
-        img: "/wawel.png",
+        img: "places/cracow/wawel-4.png",
       },
     ],
   },
