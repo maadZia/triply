@@ -9,7 +9,6 @@ import {
 
 import { allPlaces } from "@/mock/places";
 
-// Helper do konwersji Place na PlanPlace
 function toPlanPlace(
   id: string,
   estimatedVisitTimeOverride?: number,
@@ -21,7 +20,7 @@ function toPlanPlace(
   return {
     id: realPlace.id,
     name: realPlace.name,
-    description: realPlace.description, // Pełny opis, bez uciętych "..."
+    description: realPlace.description,
     mainImage: realPlace.mainImage,
     rating: realPlace.rating,
     location: {
@@ -40,7 +39,6 @@ function toPlanPlace(
   };
 }
 
-// Mock plan - przykładowy plan dla Krakowa
 const mockKrakowPlan: GeneratedPlan = {
   id: "mock-krakow-001",
   city: "Kraków",
@@ -114,7 +112,6 @@ const mockKrakowPlan: GeneratedPlan = {
   },
 };
 
-// Mock plan dla Paryża (placeholder)
 const mockParisPlan: GeneratedPlan = {
   id: "mock-paris-001",
   city: "Paryż",
@@ -302,25 +299,21 @@ const mockPlans: GeneratedPlan[] = [
   mockParisPlan2,
 ];
 
-// Pobierz mock plan po ID
 export function getMockPlanById(id: string): GeneratedPlan | null {
   const plan = mockPlans.find((p) => p.id === id);
   return plan || null;
 }
 
-// Pobierz wszystkie mock plany dla użytkownika (dla strony profilu)
 export function getMockPlansForUser(): GeneratedPlan[] {
   return mockPlans;
 }
 
-// Future: funkcja do zapisywania planu
 export async function savePlanToBackend(): Promise<{
   // _plan: GeneratedPlan
   success: boolean;
   id?: string;
   error?: string;
 }> {
-  // Mock implementacja - symulacja API call
   await new Promise((resolve) => setTimeout(resolve, 500));
   return {
     success: true,
@@ -328,11 +321,9 @@ export async function savePlanToBackend(): Promise<{
   };
 }
 
-// Future: funkcja do pobierania planu z backendu
 export async function fetchPlanFromBackend(
   id: string,
 ): Promise<GeneratedPlan | null> {
-  // Mock implementacja - symulacja API call
   await new Promise((resolve) => setTimeout(resolve, 300));
   return getMockPlanById(id);
 }

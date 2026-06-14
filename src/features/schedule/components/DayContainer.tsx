@@ -6,6 +6,7 @@ import {
   MapPinIcon,
   CurrencyDollarIcon,
 } from "@heroicons/react/24/outline";
+import { Divider } from "@/components/design-system/atoms/Divider";
 
 interface DayContainerProps {
   day: DayPlan;
@@ -23,8 +24,8 @@ export function DayContainer({
   const formattedDate = formatDateForDisplay(day.date);
 
   return (
-    <div className="space-y-3 p-3">
-      <header className="border-b border-gray-100 p-4">
+    <div className="space-y-4 p-3">
+      <header className="border-b border-gray-100">
         <h2 className="text-lg font-semibold text-contentPrimary">
           Dzień {day.day}
           {formattedDate && (
@@ -49,36 +50,33 @@ export function DayContainer({
         </div>
       </header>
 
-      {/* Lista atrakcji */}
-      <div className="space-y-4">
-        {day.places.map((place, index) => (
-          <PlaceCard
-            key={place.id}
-            place={place}
-            index={index + 1}
-            onRemove={onRemovePlace ? () => onRemovePlace(place.id) : undefined}
-            onReorder={
-              onReorderPlace
-                ? () => onReorderPlace(place.id, index > 0 ? "up" : "down")
-                : undefined
-            }
-            onDetailsClick={
-              onDetailsClick ? () => onDetailsClick(place.id) : undefined
-            }
-          />
-        ))}
-      </div>
+      <Divider soft />
 
-      {/* Footer ze statystykami */}
-      {day.places.length > 0 && (
-        <div className="mt-4 rounded-lg bg-backgroundSecondary p-3 text-sm text-contentSecondary">
-          <p>
-            <strong>Podsumowanie dnia:</strong> {day.stats.totalPlaces}{" "}
-            atrakcji, {formatTime(day.stats.totalTime)}, około{" "}
-            {day.stats.totalPrice} PLN
-          </p>
+      {/* Lista atrakcji */}
+      <div className="relative">
+        <div className="absolute left-3 top-0 bottom-0 w-px bg-borderSecondary" />
+
+        <div className="space-y-4">
+          {day.places.map((place, index) => (
+            <PlaceCard
+              key={place.id}
+              place={place}
+              index={index + 1}
+              onRemove={
+                onRemovePlace ? () => onRemovePlace(place.id) : undefined
+              }
+              onReorder={
+                onReorderPlace
+                  ? () => onReorderPlace(place.id, index > 0 ? "up" : "down")
+                  : undefined
+              }
+              onDetailsClick={
+                onDetailsClick ? () => onDetailsClick(place.id) : undefined
+              }
+            />
+          ))}
         </div>
-      )}
+      </div>
     </div>
   );
 }

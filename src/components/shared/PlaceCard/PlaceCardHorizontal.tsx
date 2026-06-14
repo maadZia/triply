@@ -33,7 +33,7 @@ export function PlaceCardHorizontal({
             <div className="flex gap-1">{actionButtons}</div>
           </header>
 
-          <P3>{description}</P3>
+          <P3 className="line-clamp-4 text-balance">{description}</P3>
         </section>
 
         <Button

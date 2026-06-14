@@ -3,6 +3,7 @@ import type { GeneratedPlan } from "@/types/plan";
 import { formatDateForDisplay } from "@/types/plan";
 import type { Place } from "@/types/places";
 import { Button } from "@/components/design-system/atoms/Button";
+import { DayTabs } from "@/features/schedule/components/DayTabs";
 import { DayContainer } from "./DayContainer";
 import { EmptyPlanState } from "./EmptyPlanState";
 import { PlaceDetailsDialog } from "@/components/shared/PlaceDetails/PlaceDetailsDialog";
@@ -13,6 +14,8 @@ import {
   ExclamationTriangleIcon,
   CheckCircleIcon,
 } from "@heroicons/react/24/outline";
+import { H2 } from "@/components/design-system/typography/Heading";
+import { P3 } from "@/components/design-system/typography/Paragraph";
 
 const Map = lazy(() =>
   import("@/components/design-system/atoms/Map").then((module) => ({
@@ -164,61 +167,27 @@ export function PlanView({ plan, isUnsaved, onSavePlan }: PlanViewProps) {
   }
 
   return (
-    <div className="flex min-h-[80vh] overflow-hidden">
+    <div className="flex min-h-[80vh] overflow-hidden gap-4">
       {/* ── Column 1: Day picker ── */}
-      <aside className="w-44 shrink-0 overflow-y-auto border-r border-gray-200 bg-white">
-        <div className="border-b border-gray-100 p-4">
-          <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-400">
-            Dni podróży
-          </h2>
-          <p className="mt-1 text-sm text-contentSecondary">
-            {editablePlan.city}
-          </p>
+      <aside className="w-56 shrink-0 overflow-y-auto">
+        <div className="p-4 space-y-1">
+          <H2>Nowy plan</H2>
+          <P3 className="text-contentSecondary">{editablePlan.city}</P3>
         </div>
 
-        <ul className="space-y-1 p-2">
-          {editablePlan.days.map((day, index) => {
-            const isSelected = index === selectedDayIndex;
-            const formattedDate = formatDateForDisplay(day.date);
-
-            return (
-              <li key={day.day} className="flex">
-                <Button
-                  onClick={() => setSelectedDayIndex(index)}
-                  className="w-full flex-col items-start gap-0 rounded-lg px-3 py-3"
-                  {...(!isSelected ? { plain: true } : {})}
-                >
-                  <span className="text-sm font-semibold">Dzień {day.day}</span>
-                  {formattedDate && (
-                    <span className="mt-0.5 text-xs opacity-70">
-                      {formattedDate}
-                    </span>
-                  )}
-                  <span className="mt-1 text-xs opacity-60">
-                    {day.stats.totalPlaces} atrakcji
-                  </span>
-                </Button>
-              </li>
-            );
-          })}
-        </ul>
-
-        {/* Statystyki planu */}
-        <div className="mt-4 border-t border-gray-100 p-4">
-          <h3 className="mb-2 text-xs font-semibold uppercase tracking-widest text-gray-400">
-            Podsumowanie
-          </h3>
-          <div className="space-y-1 text-xs text-contentSecondary">
-            <p>{editablePlan.stats.totalPlaces} atrakcji</p>
-            <p>{editablePlan.stats.totalDays} dni</p>
-            <p>{editablePlan.stats.totalPrice} PLN</p>
-          </div>
-        </div>
+        <DayTabs
+          days={editablePlan.days.map((day) => ({
+            id: day.day,
+            label: `Dzień ${day.day}`,
+            date: day.date ? formatDateForDisplay(day.date) : undefined,
+          }))}
+          selectedIndex={selectedDayIndex}
+          onSelect={setSelectedDayIndex}
+        />
       </aside>
 
       {/* ── Column 2: Places list ── */}
-      <section className="flex-1 overflow-y-auto border-r border-gray-200 bg-white">
-        {/* Warning dla niezapisanego planu */}
+      <section className="max-w-xl overflow-y-auto">
         {isUnsaved && (
           <div className="flex items-center justify-between border-b border-amber-200 bg-amber-50 p-3">
             <div className="flex items-center gap-2">
@@ -239,22 +208,11 @@ export function PlanView({ plan, isUnsaved, onSavePlan }: PlanViewProps) {
           </div>
         )}
 
-        <div className="border-b border-gray-100 p-4">
-          <h1 className="text-base font-semibold text-gray-900">
-            Harmonogram - Dzień {selectedDay.day}
-          </h1>
-          {selectedDay.date && (
-            <p className="mt-0.5 text-xs text-gray-400">
-              {formatDateForDisplay(selectedDay.date)}
-            </p>
-          )}
-        </div>
-
         <DayContainer day={selectedDay} onDetailsClick={handleDetailsClick} />
       </section>
 
       {/* ── Column 3: Map ── */}
-      <section className="flex-1 max-h-[calc(100vh-100px)] overflow-hidden relative">
+      <section className="flex-1 max-h-[calc(100vh-100px)] overflow-hidden relative rounded-xl border border-borderSecondary">
         <Suspense
           fallback={
             <div className="flex h-full items-center justify-center text-sm text-gray-400">

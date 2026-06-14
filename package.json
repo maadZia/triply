@@ -22,6 +22,7 @@
     "@heroicons/react": "^2.2.0",
     "@radix-ui/react-slider": "^1.4.0",
     "clsx": "^2.1.1",
+    "date-fns": "^4.4.0",
     "firebase": "^12.13.0",
     "framer-motion": "^12.38.0",
     "leaflet": "^1.9.4",
