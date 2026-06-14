@@ -1,3 +1,5 @@
+import { format, parseISO } from "date-fns";
+import { pl } from "date-fns/locale";
 import type {
   PLACE_TYPE,
   CROWD_LEVEL,
@@ -55,6 +57,7 @@ export interface DayPlan {
 
 export interface GeneratedPlan {
   id: string; // 'generated' lub UUID
+  name?: string; // nazwa planu (opcjonalna dla nowych planów)
   city: string;
   days: DayPlan[];
   createdAt: Date;
@@ -96,25 +99,10 @@ export function calculateDate(
   return date.toISOString().split("T")[0];
 }
 
-// Polskie nazwy dni tygodnia
-const DAYS_PL = [
-  "Niedziela",
-  "Poniedziałek",
-  "Wtorek",
-  "Środa",
-  "Czwartek",
-  "Piątek",
-  "Sobota",
-];
-
-// Formatowanie daty do wyświetlenia (np. "Pon, 2 cze")
 export function formatDateForDisplay(
   dateStr: string | undefined,
 ): string | undefined {
   if (!dateStr) return undefined;
-  const date = new Date(dateStr);
-  const dayName = DAYS_PL[date.getDay()].slice(0, 3);
-  const dayNum = date.getDate();
-  const month = date.toLocaleString("pl-PL", { month: "short" }).slice(0, 3);
-  return `${dayName}, ${dayNum} ${month}`;
+  const date = parseISO(dateStr);
+  return format(date, "EEE, d MMM", { locale: pl });
 }

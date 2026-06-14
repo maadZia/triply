@@ -1,61 +1,71 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { ExpandableCard } from "@/components/design-system/cards/ExpandableCard";
 import { PlanCard } from "@/features/profile/sections/PlansSection/PlanCard";
+import { getMockPlansForUser } from "@/mock/plans";
+import {
+  INTEREST_CATEGORY_LABELS,
+  type INTEREST_CATEGORY,
+} from "@/types/places";
 
-// Mock data — resets on page reload. London and Rome removed (empty).
-// planId maps each trip to its GeneratedPlan in mock/plans.ts → /schedule/:planId
-const INITIAL_PLANS = [
-  {
-    city: "Paryż",
-    defaultOpen: false,
-    trips: [
-      {
-        id: "paris-1",
-        planId: "mock-paris-001",
-        title: "Weekend w Paryżu",
-        days: "3 dni",
-        tags: "Relaks i sztuka",
-        img: "/places/paris/eiffel/eiffel-2.jpeg",
-      },
-      {
-        id: "paris-2",
-        planId: "mock-paris-002",
-        title: "Śladami sztuki",
-        days: "5 dni",
-        tags: "Luwr, d'Orsay, Montmartre",
-        img: "/places/paris/montmare/montmare-1.jpeg",
-      },
-    ],
-  },
-  {
-    city: "Kraków",
-    defaultOpen: false,
-    trips: [
-      {
-        id: "krakow-1",
-        planId: "mock-krakow-001",
-        title: "Królewskie Miasto",
-        days: "2 dni",
-        tags: "Wawel, Rynek, Kazimierz",
-        img: "/places/cracow/wawel/wawel-1.png",
-      },
-      {
-        id: "krakow-2",
-        planId: "mock-krakow-002",
-        title: "Smak Krakowa",
-        days: "3 dni",
-        tags: "Kuchnia, historia, kultura",
-        img: "/places/cracow/rynek/rynek-1.jpg",
-      },
-    ],
-  },
-];
+type Trip = {
+  id: string;
+  planId: string;
+  title: string;
+  days: string;
+  tags: string;
+  img: string;
+};
 
-type Trip = (typeof INITIAL_PLANS)[number]["trips"][number];
 type Group = { city: string; defaultOpen: boolean; trips: Trip[] };
 
+function getPlanTitle(planName: string | undefined): string {
+  return planName || "Plan bez nazwy";
+}
+
+function generateTags(plan: {
+  filters: { categories: INTEREST_CATEGORY[] };
+}): string {
+  const categories = plan.filters.categories;
+  if (categories.length === 0) return "Zwiedzanie";
+  return categories
+    .slice(0, 3)
+    .map((c) => INTEREST_CATEGORY_LABELS[c] || c)
+    .join(", ");
+}
+
 export function PlansSection() {
-  const [groups, setGroups] = useState<Group[]>(INITIAL_PLANS);
+  const mockPlans = useMemo(() => getMockPlansForUser(), []);
+
+  const initialGroups = useMemo<Group[]>(() => {
+    const plansByCity = new Map<string, typeof mockPlans>();
+
+    mockPlans.forEach((plan) => {
+      const cityPlans = plansByCity.get(plan.city) || [];
+      cityPlans.push(plan);
+      plansByCity.set(plan.city, cityPlans);
+    });
+
+    return Array.from(plansByCity.entries()).map(([city, plans]) => ({
+      city,
+      defaultOpen: false,
+      trips: plans.map((plan) => {
+        const firstDay = plan.days[0];
+        const firstPlace = firstDay?.places[0];
+        const img = firstPlace?.mainImage || "/places/default.jpg";
+
+        return {
+          id: plan.id,
+          planId: plan.id,
+          title: getPlanTitle(plan.name),
+          days: `${plan.stats.totalDays} ${plan.stats.totalDays === 1 ? "dzień" : plan.stats.totalDays < 5 ? "dni" : "dni"}`,
+          tags: generateTags(plan),
+          img,
+        };
+      }),
+    }));
+  }, [mockPlans]);
+
+  const [groups, setGroups] = useState<Group[]>(initialGroups);
 
   const handleDelete = (city: string, tripId: string) => {
     setGroups((prev) =>

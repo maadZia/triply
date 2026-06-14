@@ -1,5 +1,5 @@
 import { Button } from "@/components/design-system/atoms/Button";
-import { H2, H3 } from "@/components/design-system/typography/Heading";
+import { H2 } from "@/components/design-system/typography/Heading";
 import { P1 } from "@/components/design-system/typography/Paragraph";
 import {
   CalendarIcon,
@@ -17,9 +17,8 @@ export default function SchedulePlaceholderPage() {
 
         <H2>Twój harmonogram</H2>
 
-        <P1 className="max-w-md text-contentSecondary">
-          Nie masz jeszcze aktywnego planu podróży. Wygeneruj nowy plan lub
-          wybierz zapisany z Twojego profilu.
+        <P1 className="max-w-md text-contentSecondary text-balance">
+          Wygeneruj nowy plan lub wybierz zapisany z Twojego profilu.
         </P1>
       </div>
 
@@ -34,29 +33,6 @@ export default function SchedulePlaceholderPage() {
           <CalendarIcon className="h-5 w-5" />
           Moje zapisane plany
         </Button>
-      </div>
-
-      <div className="mt-8 grid max-w-2xl gap-4 sm:grid-cols-2">
-        <div className="rounded-lg border border-gray-200 bg-white p-4">
-          <H3 className="mb-2 text-base">Jak to działa?</H3>
-          <P1 className="text-sm text-contentSecondary">
-            1. Wybierz miasto i preferencje na stronie głównej
-            <br />
-            2. Nasz algorytm wygeneruje spersonalizowany plan
-            <br />
-            3. Przeglądaj atrakcje dzień po dniu
-          </P1>
-        </div>
-
-        <div className="rounded-lg border border-gray-200 bg-white p-4">
-          <H3 className="mb-2 text-base">Dlaczego warto?</H3>
-          <P1 className="text-sm text-contentSecondary">
-            - Optymalne trasy geograficzne
-            <br />
-            - Dopasowane do Twoich zainteresowań
-            <br />- Oszczędność czasu na planowaniu
-          </P1>
-        </div>
       </div>
     </div>
   );

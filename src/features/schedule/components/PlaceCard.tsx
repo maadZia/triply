@@ -1,35 +1,53 @@
-import { ArrowsUpDownIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon } from "@heroicons/react/24/outline";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import type { PlanPlace } from "@/types/plan";
 import { Button } from "@/components/design-system/atoms/Button";
+import { DragHandleIcon } from "@/components/design-system/atoms/icons";
 import { PlaceCardHorizontal } from "@/components/shared/PlaceCard/PlaceCardHorizontal";
+import { cn } from "@/components/utils";
 
 interface PlaceCardProps {
   place: PlanPlace;
-  index: number;
   onRemove?: () => void;
-  onReorder?: () => void;
   onDetailsClick?: () => void;
+  isOverlay?: boolean;
 }
 
 export function PlaceCard({
   place,
-  index,
   onRemove,
-  onReorder,
   onDetailsClick,
+  isOverlay = false,
 }: PlaceCardProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: place.id,
+    data: {
+      place,
+    },
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
   const actionButtons = (
     <>
-      {onReorder && (
-        <Button
-          plain
-          onClick={onReorder}
-          className="h-8 w-8 p-0"
-          title="Zmień kolejność"
-        >
-          <ArrowsUpDownIcon className="h-4 w-4" />
-        </Button>
-      )}
+      <DragHandleIcon
+        ref={setActivatorNodeRef}
+        {...attributes}
+        {...listeners}
+        isDragging={isDragging}
+      />
       {onRemove && (
         <Button
           plain
@@ -44,11 +62,15 @@ export function PlaceCard({
   );
 
   return (
-    <div className="flex items-center gap-2">
-      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accentBase text-sm font-bold text-white shadow-sm">
-        {index}
-      </div>
-
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={cn(
+        "flex-1",
+        isDragging && !isOverlay && "opacity-30",
+        isOverlay && "opacity-100 z-50",
+      )}
+    >
       <PlaceCardHorizontal
         title={place.name}
         description={place.description}

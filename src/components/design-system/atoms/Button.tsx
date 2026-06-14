@@ -20,16 +20,15 @@ const variantStyles = {
     hover: "",
   },
   destructive: {
-    base: "bg-actionDestructive border-1 border-borderDestructive text-contentInverted custom-shadow",
+    base: "bg-contentDesctructive border-1 border-contentDesctructive text-contentInverted custom-shadow",
     hover: "hover:brightness-105 transition duration-200",
   },
   outlineDestructive: {
-    base: "border-1 border-borderDestructive text-contentDestructive bg-actionDestructive/5",
+    base: "border-1 border-contentDesctructive text-contentDestructive bg-actionDestructive/5",
     hover: "hover:brightness-105 transition duration-200",
   },
 } as const;
 
-// Definiujemy flagi boolean jako opcjonalne warianty, które się wykluczają
 type VariantFlags =
   | {
       outline?: true;

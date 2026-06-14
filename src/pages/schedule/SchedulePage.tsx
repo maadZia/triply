@@ -8,7 +8,10 @@ import type { GeneratedPlan } from "@/types/plan";
 
 export default function SchedulePage() {
   const { id } = useParams<{ id: string }>();
-  const { currentPlan, hasUnsavedChanges, markAsSaved } = useGeneratedPlan();
+  const { currentPlan, markAsSaved } = useGeneratedPlan();
+
+  // Określ czy to plan z profilu (ma ID) czy wygenerowany
+  const isProfilePlan = id !== "generated";
 
   // Pobierz plan na podstawie ID
   const plan = useMemo<GeneratedPlan | null>(() => {
@@ -28,8 +31,10 @@ export default function SchedulePage() {
   const handleSavePlan = () => {
     // Future: tutaj będzie zapis do backendu
     // Na razie tylko oznacz jako zapisane
-    markAsSaved();
-    alert("Plan zapisany w profilu! (mock)");
+    if (!isProfilePlan) {
+      markAsSaved();
+    }
+    alert(isProfilePlan ? "Zmiany zapisane!" : "Plan zapisany w profilu!");
   };
 
   // Jeśli brak planu, pokaż empty state
@@ -45,11 +50,5 @@ export default function SchedulePage() {
     );
   }
 
-  return (
-    <PlanView
-      plan={plan}
-      isUnsaved={id === "generated" && hasUnsavedChanges}
-      onSavePlan={id === "generated" ? handleSavePlan : undefined}
-    />
-  );
+  return <PlanView plan={plan} onSavePlan={handleSavePlan} />;
 }

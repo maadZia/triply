@@ -30,7 +30,7 @@ import {
 } from "@/types/places";
 import type { PlanFilters } from "@/types/plan";
 import { useGeneratedPlan } from "@/context/GeneratedPlanContext";
-import { GeneratingModal } from "@/components/shared/GeneratingModal";
+import { GeneratingModal } from "@/features/home/components/GeneratingModal";
 import { validateFilters } from "@/utils/planGenerator";
 import { getUniqueCities } from "@/mock/places";
 

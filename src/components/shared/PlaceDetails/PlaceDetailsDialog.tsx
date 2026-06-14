@@ -3,7 +3,6 @@ import {
   Dialog,
   DialogPanel,
 } from "@/components/design-system/overlays/Dialog";
-
 import { Button } from "@/components/design-system/atoms/Button";
 import { HeartButton } from "@/components/design-system/atoms/icons";
 import { H2 } from "@/components/design-system/typography/Heading";
@@ -46,18 +45,23 @@ type PlaceDetailsDialogProps = {
   onAddToPlan?: () => void;
 };
 
-export function PlaceDetailsDialog({
+// Wewnętrzny komponent z kluczem - stan resetuje się przy zmianie place
+type PlaceDetailsContentProps = {
+  place: Place;
+  onClose: () => void;
+  showAddToPlan: boolean;
+  onAddToPlan?: () => void;
+};
+
+function PlaceDetailsContent({
   place,
-  open,
   onClose,
-  showAddToPlan = true,
+  showAddToPlan,
   onAddToPlan,
-}: PlaceDetailsDialogProps) {
+}: PlaceDetailsContentProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
   const [galleryOpen, setGalleryOpen] = useState<boolean>(false);
-
-  if (!open || !place) return null;
 
   const images = place.images || [place.img];
   const mainImage = images[selectedImageIndex] || place.img;
@@ -74,7 +78,7 @@ export function PlaceDetailsDialog({
   };
 
   return (
-    <Dialog open={open} onClose={onClose}>
+    <>
       <DialogPanel className="max-w-4xl overflow-hidden p-0 w-full max-h-[90vh] overflow-y-auto">
         {/* Main Content - Two Column Layout */}
         <div className="flex flex-col lg:flex-row gap-0">
@@ -88,7 +92,9 @@ export function PlaceDetailsDialog({
               <img
                 src={mainImage}
                 alt={place.title}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition-opacity duration-200"
+                loading="eager"
+                decoding="async"
               />
             </button>
 
@@ -109,6 +115,8 @@ export function PlaceDetailsDialog({
                     src={img}
                     alt={`Thumbnail ${idx + 1}`}
                     className="w-full h-full object-cover"
+                    loading="eager"
+                    decoding="async"
                   />
                 </button>
               ))}
@@ -209,18 +217,28 @@ export function PlaceDetailsDialog({
             <Divider className="my-4" />
 
             {/* Footer - Actions */}
-            <div className="flex gap-3 items-center">
-              {showAddToPlan && (
+            {showAddToPlan ? (
+              <div className="flex gap-3 items-center">
                 <Button className="flex-1" onClick={onAddToPlan}>
                   Dodaj do planu
                 </Button>
-              )}
-              <HeartButton
-                defaultLiked={isFavorite}
-                onToggle={setIsFavorite}
-                className="p-2"
-              />
-            </div>
+                <HeartButton
+                  defaultLiked={isFavorite}
+                  onToggle={setIsFavorite}
+                  className="p-2"
+                />
+              </div>
+            ) : (
+              <div className="flex gap-3 items-center">
+                <HeartButton
+                  defaultLiked={isFavorite}
+                  onToggle={setIsFavorite}
+                />
+                <P3>
+                  {isFavorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
+                </P3>
+              </div>
+            )}
           </div>
         </div>
       </DialogPanel>
@@ -232,6 +250,29 @@ export function PlaceDetailsDialog({
         onImageChange={handleGalleryImageChange}
         open={galleryOpen}
         onClose={() => setGalleryOpen(false)}
+      />
+    </>
+  );
+}
+
+export function PlaceDetailsDialog({
+  place,
+  open,
+  onClose,
+  showAddToPlan = false,
+  onAddToPlan,
+}: PlaceDetailsDialogProps) {
+  if (!open || !place) return null;
+
+  return (
+    <Dialog open={open} onClose={onClose}>
+      {/* Klucz na PlaceDetailsContent resetuje wszystkie stany useState */}
+      <PlaceDetailsContent
+        key={place.title}
+        place={place}
+        onClose={onClose}
+        showAddToPlan={showAddToPlan}
+        onAddToPlan={onAddToPlan}
       />
     </Dialog>
   );
