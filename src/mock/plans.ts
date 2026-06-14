@@ -41,6 +41,7 @@ function toPlanPlace(
 
 const mockKrakowPlan: GeneratedPlan = {
   id: "mock-krakow-001",
+  name: "Plan Kraków",
   city: "Kraków",
   days: [
     {
@@ -114,6 +115,7 @@ const mockKrakowPlan: GeneratedPlan = {
 
 const mockParisPlan: GeneratedPlan = {
   id: "mock-paris-001",
+  name: "Weekend w Paryżu",
   city: "Paryż",
   days: [
     {
@@ -175,6 +177,7 @@ const mockParisPlan: GeneratedPlan = {
 
 const mockParisPlan2: GeneratedPlan = {
   id: "mock-paris-002",
+  name: "Wycieczka do Paryża",
   city: "Paryż",
   days: [
     {
