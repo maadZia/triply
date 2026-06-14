@@ -22,6 +22,8 @@ export const cracowPlaces: Place[] = [
       "/places/cracow/wawel/wawel-1.png",
       "/places/cracow/wawel/wawel-2.png",
       "/places/cracow/wawel/wawel-3.png",
+      "/places/cracow/wawel/wawel-4.png",
+      "/places/cracow/wawel/wawel-5.png",
     ],
     mainImage: "/places/cracow/wawel/wawel-1.png",
     rating: { score: 4.9, reviews: 12540 },

@@ -1,11 +1,17 @@
-import { Dialog } from "@/components/design-system/overlays/Dialog";
+import {
+  Dialog,
+  DialogPanel,
+  DialogTitle,
+} from "@/components/design-system/overlays/Dialog";
 import { P1 } from "@/components/design-system/typography/Paragraph";
 import { H3 } from "@/components/design-system/typography/Heading";
 import {
   SparklesIcon,
   MapPinIcon,
+  ClockIcon,
   CheckCircleIcon,
 } from "@heroicons/react/24/outline";
+import { Button } from "@/components/design-system/atoms/Button";
 
 interface GeneratingModalProps {
   isOpen: boolean;
@@ -17,7 +23,7 @@ interface GeneratingModalProps {
 const STEPS = [
   { icon: SparklesIcon, label: "Filtrowanie miejsc..." },
   { icon: MapPinIcon, label: "Analiza geolokalizacji..." },
-  { icon: MapPinIcon, label: "Optymalizacja tras..." },
+  { icon: ClockIcon, label: "Optymalizacja tras..." },
   { icon: CheckCircleIcon, label: "Finalizowanie planu..." },
 ];
 
@@ -31,10 +37,10 @@ export function GeneratingModal({
 
   return (
     <Dialog open={isOpen} onClose={canClose && onClose ? onClose : () => {}}>
-      <div className="flex flex-col items-center gap-6 p-2">
+      <DialogPanel className="flex flex-col gap-6">
         {error ? (
           <>
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+            <DialogTitle className="flex items-center gap-2">
               <svg
                 className="h-8 w-8 text-red-600"
                 fill="none"
@@ -48,18 +54,13 @@ export function GeneratingModal({
                   d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-            </div>
-            <div className="text-center">
               <H3 className="text-red-600">Nie udało się wygenerować planu</H3>
-              <P1 className="mt-2 max-w-sm text-contentSecondary">{error}</P1>
-            </div>
+            </DialogTitle>
+            <P1 className="text-contentSecondary">{error}</P1>
             {onClose && (
-              <button
-                onClick={onClose}
-                className="rounded-lg bg-accentBase px-4 py-2 text-sm font-medium text-white hover:bg-accentDark"
-              >
+              <Button onClick={onClose} className="mx-auto">
                 Spróbuj ponownie
-              </button>
+              </Button>
             )}
           </>
         ) : (
@@ -99,8 +100,8 @@ export function GeneratingModal({
                         isActive
                           ? "bg-accentBase text-white"
                           : isCompleted
-                            ? "bg-green-100 text-green-600"
-                            : "bg-gray-100"
+                            ? " text-green-600"
+                            : "bg-transparent"
                       }`}
                     >
                       {isCompleted ? (
@@ -122,7 +123,7 @@ export function GeneratingModal({
             </P1>
           </>
         )}
-      </div>
+      </DialogPanel>
     </Dialog>
   );
 }
