@@ -49,6 +49,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <input
+        data-slot="control"
         ref={ref}
         disabled={disabled}
         readOnly={readOnly}

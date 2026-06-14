@@ -14,6 +14,7 @@ export function Field({
       {...props}
       className={cn(
         "[&>[data-slot=control]+[data-slot=error]]:mt-1",
+        "[&>[data-slot=label]+[data-slot=control]]:mt-1",
         className,
       )}
     />

@@ -14,7 +14,7 @@ export function Label({
       data-slot="label"
       {...props}
       className={cn(
-        "select-none text-contentSecondary text-sm leading-5 data-disabled:opacity-50 sm:text-sm/6",
+        "select-none text-contentSecondary text-sm leading-5 data-disabled:opacity-50 sm:text-sm/6 font-medium",
         className,
       )}
     />
