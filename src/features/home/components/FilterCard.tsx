@@ -10,16 +10,8 @@ import { Button } from "@/components/design-system/atoms/Button";
 import { Switch } from "@/components/design-system/forms/Switch";
 import { CheckboxButton } from "@/components/design-system/forms/CheckboxButton";
 import { Combobox } from "@/components/design-system/forms/Combobox";
+import { RadioButton } from "@/components/design-system/forms/RadioButton";
 import { Slider } from "@/components/design-system/forms/Slider";
-import {
-  MapPinIcon,
-  StarIcon,
-  WalletIcon,
-  UsersIcon,
-  SunIcon,
-  BuildingOfficeIcon,
-  HeartIcon,
-} from "@heroicons/react/24/outline";
 import {
   PLACE_TYPE,
   CROWD_LEVEL,
@@ -75,14 +67,15 @@ export function FilterCard() {
   // Local UI state - no functionality
   const [selectedCity, setSelectedCity] = useState<string>("");
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
-  const [minRating, setMinRating] = useState<number>(0);
-  const [maxRating, setMaxRating] = useState<number>(5);
+  const [minRating, setMinRating] = useState<number>(4);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 500]);
   const [selectedCrowdLevels, setSelectedCrowdLevels] = useState<string[]>([]);
   const [selectedTargetGroups, setSelectedTargetGroups] = useState<string[]>(
     [],
   );
-  const [selectedStyle, setSelectedStyle] = useState<string>("");
+  const [selectedStyle, setSelectedStyle] = useState<TRAVEL_STYLE>(
+    TRAVEL_STYLE.RELAXED,
+  );
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [foodAvailable, setFoodAvailable] = useState<boolean>(false);
   const [selectedFoodTypes, setSelectedFoodTypes] = useState<string[]>([]);
@@ -104,11 +97,10 @@ export function FilterCard() {
     setSelectedCity("");
     setSelectedTypes([]);
     setMinRating(0);
-    setMaxRating(5);
     setPriceRange([0, 500]);
     setSelectedCrowdLevels([]);
     setSelectedTargetGroups([]);
-    setSelectedStyle("");
+    setSelectedStyle(TRAVEL_STYLE.RELAXED);
     setSelectedCategories([]);
     setFoodAvailable(false);
     setSelectedFoodTypes([]);
@@ -132,10 +124,7 @@ export function FilterCard() {
       <Fieldset>
         {/* City Selection - Combobox */}
         <Field>
-          <div className="flex items-center gap-2">
-            <MapPinIcon className="h-5 w-5 text-accentBase" />
-            <Label>Miasto</Label>
-          </div>
+          <Label>Gdzie chcesz się wybrać?</Label>
           <Combobox
             value={selectedCity}
             onChange={setSelectedCity}
@@ -144,13 +133,38 @@ export function FilterCard() {
           />
         </Field>
 
+        <div className="flex gap-4 justify-between">
+          <Field className="flex-1">
+            <Label>Liczba dni</Label>
+            <Input
+              type="number"
+              min={1}
+              max={10}
+              step={1}
+              placeholder="3"
+              onChange={(e) => {
+                const v = Number(e.target.value);
+
+                if (v === 0) {
+                  e.target.value = "1";
+                }
+                if (v > 10) {
+                  e.target.value = "10";
+                }
+              }}
+            />
+          </Field>
+
+          <Field className="flex-1">
+            <Label>Data rozpoczęcia</Label>
+            <Input type="date" className="text-black scheme-light" />
+          </Field>
+        </div>
+
         {/* Place Type */}
         <Field>
-          <div className="flex items-center gap-2">
-            <BuildingOfficeIcon className="h-5 w-5 text-accentBase" />
-            <Label>Typ atrakcji</Label>
-          </div>
-          <div className="flex flex-wrap gap-2">
+          <Label>Typ atrakcji</Label>
+          <div data-slot="control" className="flex flex-wrap gap-2">
             <CheckboxButton
               label={PLACE_TYPE_LABELS[PLACE_TYPE.OUTDOOR]}
               checked={selectedTypes.includes(PLACE_TYPE.OUTDOOR)}
@@ -178,10 +192,7 @@ export function FilterCard() {
 
         {/* Rating Range - Double Slider */}
         <Field>
-          <div className="flex items-center gap-2">
-            <StarIcon className="h-5 w-5 text-accentBase" />
-            <Label>Ocena (min-max)</Label>
-          </div>
+          <Label>Minimalna ocena miejsca</Label>
           <div className="flex items-center gap-4">
             <Input
               type="number"
@@ -190,38 +201,21 @@ export function FilterCard() {
               step={0.1}
               value={minRating}
               onChange={(e) => setMinRating(Number(e.target.value))}
-              className="w-20"
+              className="w-30"
             />
             <Slider
-              variant="double"
               min={0}
               max={5}
               step={0.1}
-              value={[minRating, maxRating]}
-              onChange={([min, max]) => {
-                setMinRating(min);
-                setMaxRating(max);
-              }}
-              showValues
-            />
-            <Input
-              type="number"
-              min={0}
-              max={5}
-              step={0.1}
-              value={maxRating}
-              onChange={(e) => setMaxRating(Number(e.target.value))}
-              className="w-20"
+              value={minRating}
+              onChange={(value) => setMinRating(value)}
             />
           </div>
         </Field>
 
         {/* Price Range - Double Slider */}
         <Field>
-          <div className="flex items-center gap-2">
-            <WalletIcon className="h-5 w-5 text-accentBase" />
-            <Label>Zakres ceny (PLN)</Label>
-          </div>
+          <Label>Zakres ceny</Label>
           <div className="flex items-center gap-4">
             <Input
               type="number"
@@ -256,11 +250,8 @@ export function FilterCard() {
 
         {/* Crowd Level */}
         <Field>
-          <div className="flex items-center gap-2">
-            <UsersIcon className="h-5 w-5 text-accentBase" />
-            <Label>Poziom zatłoczenia</Label>
-          </div>
-          <div className="flex flex-wrap gap-2">
+          <Label>Poziom zatłoczenia</Label>
+          <div data-slot="control" className="flex flex-wrap gap-2">
             {crowdOptions.map((option) => (
               <CheckboxButton
                 key={option.value}
@@ -280,11 +271,8 @@ export function FilterCard() {
 
         {/* Target Groups */}
         <Field>
-          <div className="flex items-center gap-2">
-            <HeartIcon className="h-5 w-5 text-accentBase" />
-            <Label>Dopasowanie do grupy</Label>
-          </div>
-          <div className="flex flex-wrap gap-2">
+          <Label>Dopasowanie do grupy</Label>
+          <div data-slot="control" className="flex flex-wrap gap-2">
             {targetGroupOptions.map((option) => (
               <CheckboxButton
                 key={option.value}
@@ -302,30 +290,24 @@ export function FilterCard() {
           </div>
         </Field>
 
-        {/* Travel Style - Combobox */}
+        {/* Travel Style - RadioButton */}
         <Field>
-          <div className="flex items-center gap-2">
-            <SunIcon className="h-5 w-5 text-accentBase" />
-            <Label>Styl podróży</Label>
-          </div>
-          <Combobox
+          <Label>Styl podróży</Label>
+          <RadioButton
             value={selectedStyle}
-            onChange={setSelectedStyle}
+            onChange={(value) => setSelectedStyle(value as TRAVEL_STYLE)}
             options={Object.values(TRAVEL_STYLE).map((v) => ({
               value: v,
               label: TRAVEL_STYLE_LABELS[v],
             }))}
-            placeholder="Wybierz styl..."
+            className="flex-row gap-4"
           />
         </Field>
 
         {/* Interest Categories */}
         <Field>
-          <div className="flex items-center gap-2">
-            <HeartIcon className="h-5 w-5 text-accentBase" />
-            <Label>Zainteresowania</Label>
-          </div>
-          <div className="flex flex-wrap gap-2">
+          <Label>Zainteresowania</Label>
+          <div data-slot="control" className="flex flex-wrap gap-2">
             {interestOptions.map((option) => (
               <CheckboxButton
                 key={option.value}
@@ -344,18 +326,16 @@ export function FilterCard() {
         </Field>
 
         {/* Food Section */}
-        <Field>
-          <div className="flex items-center gap-2">
-            <Label>Jedzenie dostępne</Label>
-            <Switch checked={foodAvailable} onChange={setFoodAvailable} />
-          </div>
+        <Field className="flex gap-2">
+          <Label>Uwzględnij jedzenie</Label>
+          <Switch checked={foodAvailable} onChange={setFoodAvailable} />
         </Field>
 
         {foodAvailable && (
           <>
-            <Field className="pl-4">
-              <Label className="text-xs text-contentTertiary">Typ lokalu</Label>
-              <div className="flex flex-wrap gap-2">
+            <Field>
+              <Label>Typ lokalu</Label>
+              <div data-slot="control" className="flex flex-wrap gap-2">
                 {foodTypeOptions.map((option) => (
                   <CheckboxButton
                     key={option.value}
@@ -373,11 +353,9 @@ export function FilterCard() {
               </div>
             </Field>
 
-            <Field className="pl-4">
-              <Label className="text-xs text-contentTertiary">
-                Rodzaj kuchni
-              </Label>
-              <div className="flex flex-wrap gap-2">
+            <Field>
+              <Label>Rodzaj kuchni</Label>
+              <div data-slot="control" className="flex flex-wrap gap-2">
                 {cuisineOptions.map((option) => (
                   <CheckboxButton
                     key={option.value}
@@ -398,7 +376,7 @@ export function FilterCard() {
         )}
       </Fieldset>
 
-      <section className="flex w-full justify-center gap-4">
+      <section className="flex w-full justify-center gap-4 mt-8">
         <Button outline onClick={handleReset}>
           Resetuj filtry
         </Button>

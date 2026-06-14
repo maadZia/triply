@@ -10,8 +10,8 @@ export enum CROWD_LEVEL {
 }
 
 export enum TRAVEL_STYLE {
-  INTENSIVE = "intensywny",
   RELAXED = "spokojny",
+  INTENSIVE = "intensywny",
 }
 
 export enum INTEREST_CATEGORY {
