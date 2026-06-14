@@ -42,12 +42,16 @@ type PlaceDetailsDialogProps = {
   place?: Place;
   open: boolean;
   onClose: () => void;
+  showAddToPlan?: boolean;
+  onAddToPlan?: () => void;
 };
 
 export function PlaceDetailsDialog({
   place,
   open,
   onClose,
+  showAddToPlan = true,
+  onAddToPlan,
 }: PlaceDetailsDialogProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
@@ -206,7 +210,11 @@ export function PlaceDetailsDialog({
 
             {/* Footer - Actions */}
             <div className="flex gap-3 items-center">
-              <Button className="flex-1">Dodaj do planu</Button>
+              {showAddToPlan && (
+                <Button className="flex-1" onClick={onAddToPlan}>
+                  Dodaj do planu
+                </Button>
+              )}
               <HeartButton
                 defaultLiked={isFavorite}
                 onToggle={setIsFavorite}

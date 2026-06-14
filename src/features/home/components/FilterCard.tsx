@@ -28,6 +28,10 @@ import {
   CUISINE_TYPE_LABELS,
   PLACE_TYPE_LABELS,
 } from "@/types/places";
+import type { PlanFilters } from "@/types/plan";
+import { useGeneratedPlan } from "@/context/GeneratedPlanContext";
+import { GeneratingModal } from "@/components/shared/GeneratingModal";
+import { validateFilters } from "@/utils/planGenerator";
 import { getUniqueCities } from "@/mock/places";
 
 const cities = getUniqueCities();
@@ -64,8 +68,17 @@ const cuisineOptions = Object.values(CUISINE_TYPE)
   }));
 
 export function FilterCard() {
-  // Local UI state - no functionality
+  const { generatePlan, isGenerating } = useGeneratedPlan();
+
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalStep, setModalStep] = useState(0);
+  const [modalError, setModalError] = useState<string | null>(null);
+
+  // Local UI state
   const [selectedCity, setSelectedCity] = useState<string>("");
+  const [selectedDays, setSelectedDays] = useState<number>(3);
+  const [startDate, setStartDate] = useState<string>("");
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [minRating, setMinRating] = useState<number>(4);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 500]);
@@ -95,8 +108,10 @@ export function FilterCard() {
 
   const handleReset = () => {
     setSelectedCity("");
+    setSelectedDays(3);
+    setStartDate("");
     setSelectedTypes([]);
-    setMinRating(0);
+    setMinRating(4);
     setPriceRange([0, 500]);
     setSelectedCrowdLevels([]);
     setSelectedTargetGroups([]);
@@ -105,6 +120,69 @@ export function FilterCard() {
     setFoodAvailable(false);
     setSelectedFoodTypes([]);
     setSelectedCuisines([]);
+  };
+
+  const handleGenerate = async () => {
+    // Przygotuj filtry
+    const filters: PlanFilters = {
+      city: selectedCity,
+      days: selectedDays,
+      startDate: startDate || undefined,
+      types: selectedTypes as PLACE_TYPE[],
+      minRating,
+      priceRange,
+      crowdLevels: selectedCrowdLevels as CROWD_LEVEL[],
+      targetGroups: selectedTargetGroups as TARGET_GROUP[],
+      style: selectedStyle,
+      categories: selectedCategories as INTEREST_CATEGORY[],
+      foodAvailable,
+      foodTypes: selectedFoodTypes as FOOD_TYPE[],
+      cuisines: selectedCuisines as CUISINE_TYPE[],
+    };
+
+    // Walidacja
+    const validationError = validateFilters(filters);
+    if (validationError) {
+      setModalError(validationError);
+      setIsModalOpen(true);
+      return;
+    }
+
+    // Otwórz modal
+    setModalError(null);
+    setModalStep(0);
+    setIsModalOpen(true);
+
+    // Symulacja kroków
+    const stepInterval = setInterval(() => {
+      setModalStep((prev) => {
+        if (prev >= 3) {
+          clearInterval(stepInterval);
+          return prev;
+        }
+        return prev + 1;
+      });
+    }, 250);
+
+    try {
+      await generatePlan(filters);
+      clearInterval(stepInterval);
+      setIsModalOpen(false);
+    } catch (error) {
+      clearInterval(stepInterval);
+      setModalStep(0);
+      setModalError(
+        error instanceof Error
+          ? error.message
+          : "Nieznany błąd podczas generowania planu",
+      );
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setModalError(null);
+    setModalStep(0);
   };
 
   return (
@@ -139,25 +217,26 @@ export function FilterCard() {
             <Input
               type="number"
               min={1}
-              max={10}
+              max={3}
               step={1}
-              placeholder="3"
+              value={selectedDays}
               onChange={(e) => {
-                const v = Number(e.target.value);
-
-                if (v === 0) {
-                  e.target.value = "1";
-                }
-                if (v > 10) {
-                  e.target.value = "10";
-                }
+                let v = Number(e.target.value);
+                if (isNaN(v) || v < 1) v = 1;
+                if (v > 10) v = 10;
+                setSelectedDays(v);
               }}
             />
           </Field>
 
           <Field className="flex-1">
             <Label>Data rozpoczęcia</Label>
-            <Input type="date" className="text-black scheme-light" />
+            <Input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="text-black scheme-light"
+            />
           </Field>
         </div>
 
@@ -377,11 +456,21 @@ export function FilterCard() {
       </Fieldset>
 
       <section className="flex w-full justify-center gap-4 mt-8">
-        <Button outline onClick={handleReset}>
+        <Button outline onClick={handleReset} disabled={isGenerating}>
           Resetuj filtry
         </Button>
-        <Button>Zastosuj filtry</Button>
+        <Button onClick={handleGenerate} disabled={isGenerating}>
+          {isGenerating ? "Generowanie..." : "Generuj plan"}
+        </Button>
       </section>
+
+      {/* Modal generowania */}
+      <GeneratingModal
+        isOpen={isModalOpen}
+        onClose={modalError ? handleCloseModal : undefined}
+        currentStep={modalStep}
+        error={modalError}
+      />
     </DarkCard>
   );
 }
