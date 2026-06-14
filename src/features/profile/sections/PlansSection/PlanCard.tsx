@@ -1,4 +1,4 @@
-import { TrashIcon } from "@heroicons/react/24/outline";
+import { DeleteButton } from "@/components/design-system/atoms/icons/DeleteButton";
 import { LightCard } from "@/components/design-system/cards/LightCard";
 import { P1, P3 } from "@/components/design-system/typography/Paragraph";
 import { Button } from "@/components/design-system/atoms/Button";
@@ -37,14 +37,11 @@ export function PlanCard({
         <header className="flex items-start justify-between gap-2">
           <P1 className="font-bold leading-snug">{title}</P1>
           {onDelete && (
-            <button
-              type="button"
+            <DeleteButton
               onClick={onDelete}
-              aria-label="Usuń plan"
-              className="shrink-0 p-1 rounded-full text-contentSecondary hover:text-red-500 hover:bg-red-50 transition-colors"
-            >
-              <TrashIcon className="h-4 w-4" />
-            </button>
+              ariaLabel="Usuń plan"
+              className="p-1.5"
+            />
           )}
         </header>
 
