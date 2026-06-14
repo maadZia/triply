@@ -7,7 +7,7 @@ import {
   useEffect,
   useCallback,
 } from "react";
-import type { GeneratedPlan, DayPlan } from "@/types/plan";
+import type { GeneratedPlan, DayPlan, PlanPlace } from "@/types/plan";
 import { formatDateForDisplay, calculateDate } from "@/types/plan";
 import type { Place } from "@/types/places";
 import { Button } from "@/components/design-system/atoms/Button";
@@ -29,6 +29,23 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { Input } from "@/components/design-system/forms/Input";
+
+// DnD imports
+import {
+  DndContext,
+  DragOverlay,
+  closestCorners,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragStartEvent,
+  type DragOverEvent,
+  type DragEndEvent,
+  defaultDropAnimationSideEffects,
+  type DropAnimation,
+} from "@dnd-kit/core";
+import { arrayMove } from "@dnd-kit/sortable";
+import { PlaceCard } from "./PlaceCard";
 
 const Map = lazy(() =>
   import("@/components/design-system/atoms/Map").then((module) => ({
@@ -52,6 +69,22 @@ export function PlanView({ plan, onSavePlan }: PlanViewProps) {
   const [isEditingName, setIsEditingName] = useState(false);
   const [planNameInput, setPlanNameInput] = useState(editablePlan.name || "");
   const prevPlanIdRef = useRef(plan.id);
+
+  // DnD state
+  const [activeDrag, setActiveDrag] = useState<{
+    placeId: string;
+    sourceDayIndex: number;
+    place: PlanPlace;
+  } | null>(null);
+  const [dragOverDayIndex, setDragOverDayIndex] = useState<number | null>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // Minimalna odległość przeciągnięcia aby aktywować drag
+      },
+    }),
+  );
 
   useEffect(() => {
     if (prevPlanIdRef.current !== plan.id) {
@@ -351,6 +384,236 @@ export function PlanView({ plan, onSavePlan }: PlanViewProps) {
     setSelectedDayIndex(editablePlan.days.length);
   }, [editablePlan.days.length]);
 
+  // ========== DnD Functions ==========
+
+  const findPlaceInPlan = useCallback(
+    (placeId: string): { dayIndex: number; placeIndex: number } | null => {
+      for (let dayIndex = 0; dayIndex < editablePlan.days.length; dayIndex++) {
+        const placeIndex = editablePlan.days[dayIndex].places.findIndex(
+          (p) => p.id === placeId,
+        );
+        if (placeIndex !== -1) {
+          return { dayIndex, placeIndex };
+        }
+      }
+      return null;
+    },
+    [editablePlan.days],
+  );
+
+  const reorderPlacesInDay = useCallback(
+    (dayIndex: number, oldIndex: number, newIndex: number) => {
+      setEditablePlan((prev) => {
+        const newDays = [...prev.days];
+        const targetDay = { ...newDays[dayIndex] };
+
+        targetDay.places = arrayMove(targetDay.places, oldIndex, newIndex);
+
+        newDays[dayIndex] = targetDay;
+
+        return {
+          ...prev,
+          days: newDays,
+        };
+      });
+      setHasModifications(true);
+    },
+    [],
+  );
+
+  const movePlaceBetweenDays = useCallback(
+    (
+      sourceDayIndex: number,
+      targetDayIndex: number,
+      placeId: string,
+      targetIndex?: number,
+    ) => {
+      setEditablePlan((prev) => {
+        const newDays = prev.days.map((day) => ({
+          ...day,
+          places: [...day.places],
+        }));
+
+        const sourceDay = newDays[sourceDayIndex];
+        const targetDay = newDays[targetDayIndex];
+
+        // Znajdź i usuń miejsce z dnia źródłowego
+        const placeIndex = sourceDay.places.findIndex((p) => p.id === placeId);
+        if (placeIndex === -1) return prev;
+
+        const [place] = sourceDay.places.splice(placeIndex, 1);
+
+        // Dodaj do dnia docelowego
+        if (targetIndex !== undefined && targetIndex >= 0) {
+          targetDay.places.splice(targetIndex, 0, place);
+        } else {
+          targetDay.places.push(place);
+        }
+
+        // Przelicz statystyki dnia źródłowego
+        sourceDay.stats = {
+          ...sourceDay.stats,
+          totalPlaces: sourceDay.places.length,
+          totalTime: sourceDay.places.reduce(
+            (sum, p) => sum + p.estimatedVisitTime,
+            0,
+          ),
+          totalPrice: sourceDay.places.reduce(
+            (sum, p) => sum + p.price.normal,
+            0,
+          ),
+        };
+
+        // Przelicz statystyki dnia docelowego
+        targetDay.stats = {
+          ...targetDay.stats,
+          totalPlaces: targetDay.places.length,
+          totalTime: targetDay.places.reduce(
+            (sum, p) => sum + p.estimatedVisitTime,
+            0,
+          ),
+          totalPrice: targetDay.places.reduce(
+            (sum, p) => sum + p.price.normal,
+            0,
+          ),
+        };
+
+        // Przelicz globalne statystyki planu
+        const totalPlaces = newDays.reduce(
+          (sum, day) => sum + day.stats.totalPlaces,
+          0,
+        );
+        const totalPrice = newDays.reduce(
+          (sum, day) => sum + day.stats.totalPrice,
+          0,
+        );
+
+        return {
+          ...prev,
+          days: newDays,
+          stats: {
+            ...prev.stats,
+            totalPlaces,
+            totalPrice,
+          },
+        };
+      });
+      setHasModifications(true);
+    },
+    [],
+  );
+
+  const handleDragStart = useCallback(
+    (event: DragStartEvent) => {
+      const { active } = event;
+      const placeId = active.id as string;
+
+      const location = findPlaceInPlan(placeId);
+      if (!location) return;
+
+      const place =
+        editablePlan.days[location.dayIndex].places[location.placeIndex];
+
+      setActiveDrag({
+        placeId,
+        sourceDayIndex: location.dayIndex,
+        place,
+      });
+    },
+    [editablePlan.days, findPlaceInPlan],
+  );
+
+  const handleDragOver = useCallback((event: DragOverEvent) => {
+    const { over } = event;
+
+    if (!over) {
+      setDragOverDayIndex(null);
+      return;
+    }
+
+    const overId = over.id.toString();
+
+    // Sprawdź czy nad zakładką dnia
+    if (overId.startsWith("day-tab-")) {
+      const dayIndex = parseInt(overId.replace("day-tab-", ""), 10);
+      setDragOverDayIndex(dayIndex);
+    } else {
+      setDragOverDayIndex(null);
+    }
+  }, []);
+
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event;
+
+      setActiveDrag(null);
+      setDragOverDayIndex(null);
+
+      if (!over) return;
+
+      const placeId = active.id as string;
+      const overId = over.id.toString();
+
+      const location = findPlaceInPlan(placeId);
+      if (!location) return;
+
+      const { dayIndex: sourceDayIndex, placeIndex: sourcePlaceIndex } =
+        location;
+
+      // Sprawdź czy upuszczono na zakładkę dnia
+      if (overId.startsWith("day-tab-")) {
+        const targetDayIndex = parseInt(overId.replace("day-tab-", ""), 10);
+
+        if (targetDayIndex !== sourceDayIndex) {
+          // Przenieś na koniec innego dnia
+          movePlaceBetweenDays(sourceDayIndex, targetDayIndex, placeId);
+          // Przełącz widok na ten dzień
+          setSelectedDayIndex(targetDayIndex);
+        }
+        return;
+      }
+
+      // Sprawdź czy upuszczono na inne miejsce w tym samym dniu
+      const targetPlaceId = overId;
+      const targetLocation = findPlaceInPlan(targetPlaceId);
+
+      if (!targetLocation) return;
+
+      const { dayIndex: targetDayIndex, placeIndex: targetPlaceIndex } =
+        targetLocation;
+
+      if (sourceDayIndex === targetDayIndex) {
+        // Ten sam dzień - zmień kolejność
+        if (sourcePlaceIndex !== targetPlaceIndex) {
+          reorderPlacesInDay(
+            sourceDayIndex,
+            sourcePlaceIndex,
+            targetPlaceIndex,
+          );
+        }
+      } else {
+        // Inny dzień - przenieś przed/za docelowe miejsce
+        movePlaceBetweenDays(
+          sourceDayIndex,
+          targetDayIndex,
+          placeId,
+          targetPlaceIndex,
+        );
+      }
+    },
+    [findPlaceInPlan, movePlaceBetweenDays, reorderPlacesInDay],
+  );
+
+  const dropAnimation: DropAnimation = {
+    sideEffects: defaultDropAnimationSideEffects({
+      styles: {
+        active: {
+          opacity: "0.5",
+        },
+      },
+    }),
+  };
+
   const placeForDialog = useMemo(() => {
     if (!selectedPlace) return undefined;
     return toDialogPlace(selectedPlace);
@@ -361,172 +624,190 @@ export function PlanView({ plan, onSavePlan }: PlanViewProps) {
   }
 
   return (
-    <div className="flex min-h-[80vh] overflow-hidden gap-4">
-      {/* ── Column 1: Day picker ── */}
-      <aside className="w-56 shrink-0 overflow-y-auto">
-        <div className="p-4 space-y-1">
-          {isEditingName ? (
-            <div className="flex items-center gap-1">
-              <Input
-                value={planNameInput}
-                onChange={(e) => setPlanNameInput(e.target.value)}
-                onKeyDown={handleNameInputKeyDown}
-                placeholder="Nazwa planu"
-                autoFocus
-                className="min-w-40"
-              />
-              <Button
-                plain
-                onClick={handleSaveName}
-                className="p-0 shrink-0 text-accentDark"
-                title="Zapisz nazwę"
-              >
-                <CheckIcon className="h-4 w-4" />
-              </Button>
-              <Button
-                plain
-                onClick={handleCancelEditName}
-                className="p-0 shrink-0 text-contentDesctructive"
-                title="Anuluj"
-              >
-                <XMarkIcon className="h-4 w-4" />
-              </Button>
-            </div>
-          ) : (
-            <div className="flex items-center gap-2">
-              <H2 className="flex-1 truncate">
-                {editablePlan.name ||
-                  (plan.id === "generated" ? "Nowy plan" : "Plan bez nazwy")}
-              </H2>
-              <Button
-                plain
-                onClick={handleStartEditingName}
-                className="h-7 w-7 p-0 shrink-0 text-contentSecondary hover:text-accentDark"
-                title="Edytuj nazwę"
-              >
-                <PencilIcon className="h-3.5 w-3.5" />
-              </Button>
-            </div>
-          )}
-          <P3 className="text-contentSecondary">{editablePlan.city}</P3>
-        </div>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCorners}
+      onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="flex min-h-[80vh] overflow-hidden gap-4">
+        {/* ── Column 1: Day picker ── */}
+        <aside className="w-56 shrink-0 overflow-y-auto">
+          <div className="p-4 space-y-1">
+            {isEditingName ? (
+              <div className="flex items-center gap-1">
+                <Input
+                  value={planNameInput}
+                  onChange={(e) => setPlanNameInput(e.target.value)}
+                  onKeyDown={handleNameInputKeyDown}
+                  placeholder="Nazwa planu"
+                  autoFocus
+                  className="min-w-40"
+                />
+                <Button
+                  plain
+                  onClick={handleSaveName}
+                  className="p-0 shrink-0 text-accentDark"
+                  title="Zapisz nazwę"
+                >
+                  <CheckIcon className="h-4 w-4" />
+                </Button>
+                <Button
+                  plain
+                  onClick={handleCancelEditName}
+                  className="p-0 shrink-0 text-contentDesctructive"
+                  title="Anuluj"
+                >
+                  <XMarkIcon className="h-4 w-4" />
+                </Button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <H2 className="flex-1 truncate">
+                  {editablePlan.name ||
+                    (plan.id === "generated" ? "Nowy plan" : "Plan bez nazwy")}
+                </H2>
+                <Button
+                  plain
+                  onClick={handleStartEditingName}
+                  className="h-7 w-7 p-0 shrink-0 text-contentSecondary hover:text-accentDark"
+                  title="Edytuj nazwę"
+                >
+                  <PencilIcon className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+            )}
+            <P3 className="text-contentSecondary">{editablePlan.city}</P3>
+          </div>
 
-        <DayTabs
-          days={editablePlan.days.map((day) => ({
-            id: day.day,
-            label: `Dzień ${day.day}`,
-            date: day.date ? formatDateForDisplay(day.date) : undefined,
-          }))}
-          selectedIndex={selectedDayIndex}
-          onSelect={setSelectedDayIndex}
-        />
+          <DayTabs
+            days={editablePlan.days.map((day) => ({
+              id: day.day,
+              label: `Dzień ${day.day}`,
+              date: day.date ? formatDateForDisplay(day.date) : undefined,
+            }))}
+            selectedIndex={selectedDayIndex}
+            onSelect={setSelectedDayIndex}
+            dragOverDayIndex={dragOverDayIndex}
+          />
 
-        <div className="px-4 pb-4">
-          <Button
-            outline
-            onClick={handleAddDay}
-            className="w-full flex items-center justify-center gap-2"
-          >
-            <PlusIcon className="h-4 w-4" />
-            Dodaj dzień
-          </Button>
-        </div>
-      </aside>
-
-      {/* ── Column 2: Places list ── */}
-      <section className="max-w-xl overflow-y-auto">
-        {/* Alert dla generated planu - zawsze pokazujemy */}
-        {plan.id === "generated" && (
-          <Alert variant="warning" className="mb-4" title="Niezapisany plan">
-            Zapisz plan, aby móc do niego później wrócić.
-          </Alert>
-        )}
-        {/* Alert dla zapisanego planu - tylko gdy są zmiany */}
-        {plan.id !== "generated" && hasModifications && (
-          <Alert variant="warning" className="mb-4" title="Niezapisane zmiany">
-            Wprowadzono zmiany w planie. Zapisz zmiany, aby nie utracić
-            modyfikacji.
-          </Alert>
-        )}
-        <DayContainer
-          day={selectedDay}
-          onDetailsClick={handleDetailsClick}
-          onRemovePlace={handleRemovePlace}
-          onDeleteDay={
-            editablePlan.days.length > 1
-              ? () => handleDeleteDayRequest(selectedDayIndex)
-              : undefined
-          }
-        />
-      </section>
-
-      {/* ── Column 3: Map ── */}
-      <section className="flex flex-col flex-1 max-h-[calc(100vh-100px)] gap-8">
-        {/* Przycisk zapisywania */}
-        <div className="flex items-center justify-end">
-          {onSavePlan && (
+          <div className="px-4 pb-4">
             <Button
-              onClick={onSavePlan}
-              disabled={plan.id !== "generated" && !hasModifications}
-              className="flex items-center gap-1 text-sm"
+              outline
+              onClick={handleAddDay}
+              className="w-full flex items-center justify-center gap-2"
             >
-              {plan.id === "generated" ? "Zapisz plan" : "Zapisz zmiany"}
+              <PlusIcon className="h-4 w-4" />
+              Dodaj dzień
             </Button>
+          </div>
+        </aside>
+
+        {/* ── Column 2: Places list ── */}
+        <section className="max-w-xl overflow-y-auto">
+          {/* Alert dla generated planu - zawsze pokazujemy */}
+          {plan.id === "generated" && (
+            <Alert variant="warning" className="mb-4" title="Niezapisany plan">
+              Zapisz plan, aby móc do niego później wrócić.
+            </Alert>
           )}
-        </div>
-
-        <div className="flex-1 overflow-hidden relative rounded-xl border border-borderSecondary">
-          <Suspense
-            fallback={
-              <div className="flex h-full items-center justify-center text-sm text-gray-400">
-                Ładowanie mapy…
-              </div>
+          {/* Alert dla zapisanego planu - tylko gdy są zmiany */}
+          {plan.id !== "generated" && hasModifications && (
+            <Alert
+              variant="warning"
+              className="mb-4"
+              title="Niezapisane zmiany"
+            >
+              Wprowadzono zmiany w planie. Zapisz zmiany, aby nie utracić
+              modyfikacji.
+            </Alert>
+          )}
+          <DayContainer
+            day={selectedDay}
+            onDetailsClick={handleDetailsClick}
+            onRemovePlace={handleRemovePlace}
+            onDeleteDay={
+              editablePlan.days.length > 1
+                ? () => handleDeleteDayRequest(selectedDayIndex)
+                : undefined
             }
-          >
-            <Map
-              center={mapCenter}
-              zoom={14}
-              markers={mapMarkers}
-              onMarkerClick={handleMarkerClick}
-            />
-          </Suspense>
+          />
+        </section>
 
-          {/* Legenda mapy */}
-          <div className="absolute bottom-4 left-4 z-10 rounded-lg bg-white/90 p-3 shadow-md backdrop-blur">
-            <div className="space-y-2 text-xs">
-              <div className="flex items-center gap-2">
-                <span className="h-4 w-4 rounded-full bg-accentBase"></span>
-                <span>W planie</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="h-4 w-4 rounded-full bg-gray-400"></span>
-                <span>Dostępne</span>
+        {/* ── Column 3: Map ── */}
+        <section className="flex flex-col flex-1 max-h-[calc(100vh-100px)] gap-8">
+          {/* Przycisk zapisywania */}
+          <div className="flex items-center justify-end">
+            {onSavePlan && (
+              <Button
+                onClick={onSavePlan}
+                disabled={plan.id !== "generated" && !hasModifications}
+                className="flex items-center gap-1 text-sm"
+              >
+                {plan.id === "generated" ? "Zapisz plan" : "Zapisz zmiany"}
+              </Button>
+            )}
+          </div>
+
+          <div className="flex-1 overflow-hidden relative rounded-xl border border-borderSecondary">
+            <Suspense
+              fallback={
+                <div className="flex h-full items-center justify-center text-sm text-gray-400">
+                  Ładowanie mapy…
+                </div>
+              }
+            >
+              <Map
+                center={mapCenter}
+                zoom={14}
+                markers={mapMarkers}
+                onMarkerClick={handleMarkerClick}
+              />
+            </Suspense>
+
+            {/* Legenda mapy */}
+            <div className="absolute bottom-4 left-4 z-10 rounded-lg bg-white/90 p-3 shadow-md backdrop-blur">
+              <div className="space-y-2 text-xs">
+                <div className="flex items-center gap-2">
+                  <span className="h-4 w-4 rounded-full bg-accentBase"></span>
+                  <span>W planie</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="h-4 w-4 rounded-full bg-gray-400"></span>
+                  <span>Dostępne</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Dialog ze szczegółami miejsca */}
-      <PlaceDetailsDialog
-        place={placeForDialog}
-        open={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
-        showAddToPlan={!isSelectedPlaceInPlan}
-        onAddToPlan={handleAddToPlan}
-      />
+        {/* Dialog ze szczegółami miejsca */}
+        <PlaceDetailsDialog
+          place={placeForDialog}
+          open={isDialogOpen}
+          onClose={() => setIsDialogOpen(false)}
+          showAddToPlan={!isSelectedPlaceInPlan}
+          onAddToPlan={handleAddToPlan}
+        />
 
-      {/* Dialog potwierdzenia usunięcia dnia */}
-      <Popup
-        open={isPopupOpen}
-        onClose={handleCancelDeleteDay}
-        onConfirm={handleConfirmDeleteDay}
-        title="Usunąć dzień z planu?"
-        description={`Czy na pewno chcesz usunąć Dzień ${dayToDeleteIndex !== null ? dayToDeleteIndex + 1 : ""} z planu? Tej operacji nie można cofnąć.`}
-        confirmText="Usuń"
-        cancelText="Anuluj"
-        variant="destructive"
-      />
-    </div>
+        {/* Dialog potwierdzenia usunięcia dnia */}
+        <Popup
+          open={isPopupOpen}
+          onClose={handleCancelDeleteDay}
+          onConfirm={handleConfirmDeleteDay}
+          title="Usunąć dzień z planu?"
+          description={`Czy na pewno chcesz usunąć Dzień ${dayToDeleteIndex !== null ? dayToDeleteIndex + 1 : ""} z planu? Tej operacji nie można cofnąć.`}
+          confirmText="Usuń"
+          cancelText="Anuluj"
+          variant="destructive"
+        />
+      </div>
+
+      {/* Drag Overlay - podgląd przeciąganego elementu */}
+      <DragOverlay dropAnimation={dropAnimation}>
+        {activeDrag ? <PlaceCard place={activeDrag.place} isOverlay /> : null}
+      </DragOverlay>
+    </DndContext>
   );
 }

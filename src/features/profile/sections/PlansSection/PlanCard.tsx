@@ -1,4 +1,4 @@
-import { DeleteButton } from "@/components/design-system/atoms/icons/DeleteButton";
+import { DeleteButton } from "@/components/shared/DeleteButton";
 import { LightCard } from "@/components/design-system/cards/LightCard";
 import { P1, P3 } from "@/components/design-system/typography/Paragraph";
 import { Button } from "@/components/design-system/atoms/Button";

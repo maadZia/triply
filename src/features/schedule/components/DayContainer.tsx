@@ -9,11 +9,14 @@ import {
 } from "@heroicons/react/24/outline";
 import { Divider } from "@/components/design-system/atoms/Divider";
 import { Button } from "@/components/design-system/atoms/Button";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 
 interface DayContainerProps {
   day: DayPlan;
   onRemovePlace?: (placeId: string) => void;
-  onReorderPlace?: (placeId: string, direction: "up" | "down") => void;
   onDetailsClick?: (placeId: string) => void;
   onDeleteDay?: () => void;
 }
@@ -21,7 +24,6 @@ interface DayContainerProps {
 export function DayContainer({
   day,
   onRemovePlace,
-  onReorderPlace,
   onDetailsClick,
   onDeleteDay,
 }: DayContainerProps) {
@@ -74,26 +76,30 @@ export function DayContainer({
       <div className="relative">
         <div className="absolute left-3 top-0 bottom-0 w-px bg-borderSecondary" />
 
-        <div className="space-y-4">
-          {day.places.map((place, index) => (
-            <PlaceCard
-              key={place.id}
-              place={place}
-              index={index + 1}
-              onRemove={
-                onRemovePlace ? () => onRemovePlace(place.id) : undefined
-              }
-              onReorder={
-                onReorderPlace
-                  ? () => onReorderPlace(place.id, index > 0 ? "up" : "down")
-                  : undefined
-              }
-              onDetailsClick={
-                onDetailsClick ? () => onDetailsClick(place.id) : undefined
-              }
-            />
-          ))}
-        </div>
+        <SortableContext
+          items={day.places.map((place) => place.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          <div className="space-y-4">
+            {day.places.map((place, index) => (
+              <div key={place.id} className="flex items-start gap-2">
+                {/* Numer osobno - nie przenosi się podczas DnD */}
+                <div className="relative z-10 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accentBase text-sm font-bold text-white shadow-sm">
+                  {index + 1}
+                </div>
+                <PlaceCard
+                  place={place}
+                  onRemove={
+                    onRemovePlace ? () => onRemovePlace(place.id) : undefined
+                  }
+                  onDetailsClick={
+                    onDetailsClick ? () => onDetailsClick(place.id) : undefined
+                  }
+                />
+              </div>
+            ))}
+          </div>
+        </SortableContext>
       </div>
     </div>
   );

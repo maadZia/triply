@@ -1,6 +1,6 @@
 import { LightCard } from "@/components/design-system/cards/LightCard";
 import { P3, P1 } from "@/components/design-system/typography/Paragraph";
-import { DeleteButton } from "@/components/design-system/atoms/icons/DeleteButton";
+import { DeleteButton } from "@/components/shared/DeleteButton";
 import { Button } from "@/components/design-system/atoms/Button";
 import {
   INTEREST_CATEGORY_LABELS,
