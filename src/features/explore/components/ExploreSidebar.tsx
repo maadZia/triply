@@ -222,11 +222,19 @@ export function ExploreSidebar({
             })),
           ]}
           selected={[...selectedFoodTypes, ...selectedCategories]}
-          onToggle={(v) => {
-            if (selectedFoodTypes.includes(v)) {
-              toggleItem(v, selectedFoodTypes, setSelectedFoodTypes);
+          onToggle={(v: FOOD_TYPE | INTEREST_CATEGORY) => {
+            if (selectedFoodTypes.includes(v as FOOD_TYPE)) {
+              toggleItem(
+                v as FOOD_TYPE,
+                selectedFoodTypes,
+                setSelectedFoodTypes,
+              );
             } else {
-              toggleItem(v, selectedCategories, setSelectedCategories);
+              toggleItem(
+                v as INTEREST_CATEGORY,
+                selectedCategories,
+                setSelectedCategories,
+              );
             }
           }}
         />

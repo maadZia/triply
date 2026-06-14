@@ -46,16 +46,10 @@ export default function ExplorePage() {
           setSelectedCrowdLevels={filters.setSelectedCrowdLevels}
           selectedTargetGroups={filters.selectedTargetGroups}
           setSelectedTargetGroups={filters.setSelectedTargetGroups}
-          selectedStyle={filters.selectedStyle}
-          setSelectedStyle={filters.setSelectedStyle}
           selectedCategories={filters.selectedCategories}
           setSelectedCategories={filters.setSelectedCategories}
-          foodAvailable={filters.foodAvailable}
-          setFoodAvailable={filters.setFoodAvailable}
           selectedFoodTypes={filters.selectedFoodTypes}
           setSelectedFoodTypes={filters.setSelectedFoodTypes}
-          selectedCuisines={filters.selectedCuisines}
-          setSelectedCuisines={filters.setSelectedCuisines}
           resetFilters={filters.resetFilters}
         />
 
