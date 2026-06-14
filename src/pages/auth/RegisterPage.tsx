@@ -201,11 +201,13 @@ export default function RegisterPage() {
 
           <p className="text-[11px] text-contentSecondary text-center px-2">
             Rejestrując się, akceptujesz nasz{" "}
-            <span className="text-accentDark font-semibold">Regulamin</span>{" "}
+            <a className="text-accentDark font-semibold" href="/privacy-policy">
+              Regulamin
+            </a>{" "}
             oraz{" "}
-            <span className="text-accentDark font-semibold">
+            <a className="text-accentDark font-semibold" href="/privacy-policy">
               Politykę Prywatności
-            </span>
+            </a>
             .
           </p>
 

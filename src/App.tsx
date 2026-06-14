@@ -10,6 +10,7 @@ import RegisterPage from "@/pages/auth/RegisterPage";
 import { AuthProvider } from "@/providers/AuthProvider";
 import { GeneratedPlanProvider } from "@/context/GeneratedPlanProvider";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import PrivacyPolicyPage from "@/pages/legal/PrivacyPolicyPage";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
               <Route path="/explore" element={<ExplorePage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
 
               {/* Protected routes — require authentication */}
               <Route element={<ProtectedRoute />}>
