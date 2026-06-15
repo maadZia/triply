@@ -24,6 +24,7 @@ export interface PlanFilters {
   foodAvailable: boolean;
   foodTypes: FOOD_TYPE[];
   cuisines: CUISINE_TYPE[];
+  pinnedPlaceIds?: string[];
 }
 
 export interface PlanPlace {
@@ -79,7 +80,6 @@ export interface GeneratedPlanContextType {
   markAsSaved: () => void; // Resetuje hasUnsavedChanges
 }
 
-// Pomocnicza funkcja do formatowania czasu
 export function formatTime(minutes: number): string {
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
@@ -88,7 +88,6 @@ export function formatTime(minutes: number): string {
   return `${hours}h ${mins}min`;
 }
 
-// Pomocnicza funkcja do obliczania daty
 export function calculateDate(
   startDate: string | undefined,
   dayIndex: number,

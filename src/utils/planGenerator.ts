@@ -201,6 +201,68 @@ function groupPlacesByProximity(
   return groups;
 }
 
+function fillDayGroup(
+  dayGroup: Place[],
+  availablePlaces: Place[],
+  usedPlaceIds: Set<string>,
+  placesPerDay: number,
+): void {
+  while (dayGroup.length < placesPerDay) {
+    const available = availablePlaces.filter((p) => !usedPlaceIds.has(p.id));
+    if (available.length === 0) break;
+
+    let nextPlace: Place;
+    if (dayGroup.length === 0) {
+      nextPlace = available.reduce((best, p) =>
+        p.rating.score > best.rating.score ? p : best,
+      );
+    } else {
+      const centroid = calculateCentroid(dayGroup);
+      nextPlace = available.reduce((closest, place) =>
+        distanceToCentroid(place, centroid) <
+        distanceToCentroid(closest, centroid)
+          ? place
+          : closest,
+      );
+    }
+
+    dayGroup.push(nextPlace);
+    usedPlaceIds.add(nextPlace.id);
+  }
+}
+
+function groupPlacesWithPinned(
+  places: Place[],
+  pinnedPlaces: Place[],
+  days: number,
+  placesPerDay: number,
+): Place[][] {
+  const groups: Place[][] = Array.from({ length: days }, () => []);
+  const usedPlaceIds = new Set<string>();
+
+  let dayIndex = 0;
+  for (const pinned of pinnedPlaces) {
+    let placed = false;
+    for (let attempt = 0; attempt < days; attempt++) {
+      const targetDay = (dayIndex + attempt) % days;
+      if (groups[targetDay].length < placesPerDay) {
+        groups[targetDay].push(pinned);
+        usedPlaceIds.add(pinned.id);
+        dayIndex = (targetDay + 1) % days;
+        placed = true;
+        break;
+      }
+    }
+    if (!placed) break;
+  }
+
+  for (let day = 0; day < days; day++) {
+    fillDayGroup(groups[day], places, usedPlaceIds, placesPerDay);
+  }
+
+  return groups.filter((g) => g.length > 0);
+}
+
 // Oblicz statystyki dnia
 function calculateDayStats(places: Place[]): DayPlan["stats"] {
   const totalPlaces = places.length;
@@ -236,13 +298,25 @@ export async function generatePlan(
   // 2. Filtruj
   const filtered = filterPlacesByCriteria(cityPlaces, filters);
 
+  // 2b. Rozwiąż przypięte miejsca (force include mimo filtrów)
+  const pinnedIds = filters.pinnedPlaceIds ?? [];
+  const pinnedPlaces = pinnedIds
+    .map((id) => cityPlaces.find((p) => p.id === id))
+    .filter((p): p is Place => p !== undefined);
+
+  const filteredIds = new Set(filtered.map((p) => p.id));
+  const pool = [
+    ...filtered,
+    ...pinnedPlaces.filter((p) => !filteredIds.has(p.id)),
+  ];
+
   // 3. Określ liczbę miejsc na dzień
   const placesPerDay = getPlacesPerDay(filters.style);
 
   // 4. Sprawdź czy mamy wystarczająco miejsc
-  if (filtered.length < placesPerDay) {
+  if (pool.length < placesPerDay) {
     throw new Error(
-      `Za mało miejsc pasujących do filtrów. Znaleziono: ${filtered.length}, ` +
+      `Za mało miejsc pasujących do filtrów. Znaleziono: ${pool.length}, ` +
         `wymagane minimum: ${placesPerDay} na dzień. Spróbuj złagodzić filtry.`,
     );
   }
@@ -250,19 +324,29 @@ export async function generatePlan(
   // 5. Dostosuj liczbę dni jeśli za mało miejsc
   const actualDays = Math.min(
     filters.days,
-    Math.floor(filtered.length / placesPerDay),
+    Math.floor(pool.length / placesPerDay),
   );
 
   if (actualDays === 0) {
     throw new Error(
-      `Za mało miejsc pasujących do filtrów. Znaleziono: ${filtered.length}. ` +
+      `Za mało miejsc pasujących do filtrów. Znaleziono: ${pool.length}. ` +
         `Spróbuj: zwiększyć zakres ceny, zmniejszyć minimalną ocenę, ` +
         `lub wybrać więcej kategorii zainteresowań.`,
     );
   }
 
-  // 6. Grupuj geograficznie
-  const dayGroups = groupPlacesByProximity(filtered, actualDays, placesPerDay);
+  if (pinnedPlaces.length > actualDays * placesPerDay) {
+    throw new Error(
+      `Za dużo przypiętych miejsc (${pinnedPlaces.length}) na ${actualDays} dni ` +
+        `(maks. ${actualDays * placesPerDay} miejsc). Odepnij nadmiarowe miejsca.`,
+    );
+  }
+
+  // 6. Grupuj geograficznie (z uwzględnieniem przypiętych)
+  const dayGroups =
+    pinnedPlaces.length > 0
+      ? groupPlacesWithPinned(pool, pinnedPlaces, actualDays, placesPerDay)
+      : groupPlacesByProximity(pool, actualDays, placesPerDay);
 
   // 7. Zbuduj strukturę GeneratedPlan
   const plan: GeneratedPlan = {

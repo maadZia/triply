@@ -1,8 +1,6 @@
-import { useLocation } from "react-router-dom";
 import { DarkCard } from "@/components/design-system/cards/DarkCard";
 import { Divider } from "@/components/design-system/atoms/Divider";
 import { Fieldset } from "@/components/design-system/forms/Fieldset";
-import type { PlanFilters } from "@/types/plan";
 import { useGeneratedPlan } from "@/context/plan/GeneratedPlanContext";
 import { GeneratingModal } from "@/features/home/components/GeneratingModal";
 import { HomepageHeader } from "@/features/home/components/HomepageHeader";
@@ -17,21 +15,28 @@ import { FilterTargetGroupField } from "@/features/home/components/FilterCard/Fi
 import { FilterTravelStyleField } from "@/features/home/components/FilterCard/FilterTravelStyleField";
 import { FilterInterestsField } from "@/features/home/components/FilterCard/FilterInterestsField";
 import { FilterFoodFields } from "@/features/home/components/FilterCard/FilterFoodFields";
-import { usePlanFilters } from "@/features/home/hooks/usePlanFilters";
+import type { UsePlanFiltersReturn } from "@/features/home/hooks/usePlanFilters";
 import { usePlanGeneration } from "@/features/home/hooks/usePlanGeneration";
 import { useSavePreferences } from "@/features/home/hooks/useSavePreferences";
 
-export function FilterCard({ isLgUp }: { isLgUp: boolean }) {
-  const { generatePlan, isGenerating } = useGeneratedPlan();
-  const location = useLocation();
-  const initialFilters = location.state?.filters as
-    | Partial<PlanFilters>
-    | undefined;
+export interface FilterCardProps {
+  isLgUp: boolean;
+  filters: UsePlanFiltersReturn;
+  pinnedPlaceIds: string[];
+}
 
-  const filters = usePlanFilters(initialFilters);
+export function FilterCard({
+  isLgUp,
+  filters,
+  pinnedPlaceIds,
+}: FilterCardProps) {
+  const { generatePlan, isGenerating } = useGeneratedPlan();
   const generation = usePlanGeneration({
     generatePlan,
-    getPlanFilters: filters.getPlanFilters,
+    getPlanFilters: () => ({
+      ...filters.getPlanFilters(),
+      pinnedPlaceIds,
+    }),
   });
   const { handleSavePreferences } = useSavePreferences();
 

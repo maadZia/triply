@@ -7,42 +7,52 @@ import { useNavigate } from "react-router-dom";
 
 type MappinButtonProps = {
   onToggle?: (clicked: boolean) => void;
+  pinned?: boolean;
   defaultLiked?: boolean;
   className?: string;
 };
 
 export function MappinButton({
   onToggle,
+  pinned,
   defaultLiked = false,
   className,
 }: MappinButtonProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [clicked, setClicked] = useState<boolean>(defaultLiked);
+  const [internalPinned, setInternalPinned] = useState<boolean>(defaultLiked);
+  const isControlled = pinned !== undefined;
+  const isPinned = isControlled ? pinned : internalPinned;
 
   const handleClick = () => {
-    const newState = !clicked;
-    setClicked(newState);
-
-    if (!user) navigate("/login");
-
-    if (onToggle) {
-      onToggle(newState);
+    if (!user) {
+      navigate("/login");
+      return;
     }
+
+    const newState = !isPinned;
+
+    if (!isControlled) {
+      setInternalPinned(newState);
+    }
+
+    onToggle?.(newState);
   };
 
-  const Icon = clicked ? MapPinSolid : MapPinOutline;
+  const Icon = isPinned ? MapPinSolid : MapPinOutline;
 
   return (
     <button
       onClick={handleClick}
       className={cn("transition-colors cursor-pointer", className)}
-      aria-pressed={clicked}
+      aria-pressed={isPinned}
     >
       <Icon
         className={cn(
           "w-5 h-5 transition-colors",
-          clicked ? "text-accentDark fill-accentDark" : "text-contentSecondary",
+          isPinned
+            ? "text-accentDark fill-accentDark"
+            : "text-contentSecondary",
         )}
       />
     </button>
