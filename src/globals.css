@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 /* * {
   scrollbar-width: thin;
@@ -92,7 +92,10 @@
   top: 8px;
   left: 50%;
   transform: translateX(-50%);
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
   font-weight: 700;
   border-radius: 4px;
   padding: 1px 1px;

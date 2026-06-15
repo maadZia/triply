@@ -63,3 +63,5 @@ export function usePlanFilters(initialFilters?: Partial<PlanFilters>) {
     getPlanFilters: () => toPlanFilters(state),
   };
 }
+
+export type UsePlanFiltersReturn = ReturnType<typeof usePlanFilters>;
