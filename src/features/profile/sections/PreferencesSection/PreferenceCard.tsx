@@ -1,5 +1,5 @@
 import { LightCard } from "@/components/design-system/cards/LightCard";
-import { P3, P1 } from "@/components/design-system/typography/Paragraph";
+import { P3 } from "@/components/design-system/typography/Paragraph";
 import { DeleteButton } from "@/components/shared/DeleteButton";
 import { Button } from "@/components/design-system/atoms/Button";
 import {
@@ -15,7 +15,7 @@ import type { PlanFilters } from "@/types/plan";
 
 export type SavedPreference = Omit<PlanFilters, "city"> & {
   id: string;
-  name: string;
+  // name: string;
   createdAt: string;
 };
 
@@ -71,11 +71,11 @@ export function PreferenceCard({
   };
 
   return (
-    <LightCard className="relative w-full max-w-3xl p-5">
+    <LightCard className="relative w-full mx-auto max-w-4xl p-5">
       <div className="mb-4 flex items-start justify-between">
-        <div>
-          <P1 className="text-lg font-bold text-gray-900">{pref.name}</P1>
-          <P3 className="mt-1 text-contentSecondary">
+        <div className="space-y-1">
+          {/* <P1 className="text-lg font-bold text-gray-900">{pref.name}</P1> */}
+          <P3 className="text-contentSecondary">
             Zapisano: {new Date(pref.createdAt).toLocaleDateString("pl-PL")}
           </P3>
         </div>
@@ -88,7 +88,7 @@ export function PreferenceCard({
       {/* Tags section */}
       <div className="mb-4 flex flex-wrap gap-2">{renderTags()}</div>
 
-      <Button className="w-full" onClick={() => onReuse(pref)}>
+      <Button outline className="w-full" onClick={() => onReuse(pref)}>
         Użyj filtrów
       </Button>
     </LightCard>

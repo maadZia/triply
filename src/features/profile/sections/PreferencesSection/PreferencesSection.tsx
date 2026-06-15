@@ -10,12 +10,13 @@ import {
   CUISINE_TYPE,
 } from "@/types/places";
 import { PreferenceCard, type SavedPreference } from "./PreferenceCard";
+import { P2 } from "@/components/design-system/typography/Paragraph";
 
 // Hardcoded preferencje
 const INITIAL_PREFERENCES: SavedPreference[] = [
   {
     id: "pref-1",
-    name: "Aktywny weekend z jedzeniem",
+    // name: "Aktywny weekend z jedzeniem",
     createdAt: "2025-05-10",
     days: 3,
     types: [PLACE_TYPE.OUTDOOR, PLACE_TYPE.INDOOR],
@@ -31,7 +32,7 @@ const INITIAL_PREFERENCES: SavedPreference[] = [
   },
   {
     id: "pref-2",
-    name: "Tania podróż studencka",
+    // name: "Tania podróż studencka",
     createdAt: "2025-06-02",
     days: 5,
     types: [PLACE_TYPE.OUTDOOR],
@@ -47,7 +48,7 @@ const INITIAL_PREFERENCES: SavedPreference[] = [
   },
   {
     id: "pref-3",
-    name: "Spokojne zwiedzanie sztuki",
+    // name: "Spokojne zwiedzanie sztuki",
     createdAt: "2026-05-14",
     days: 2,
     types: [PLACE_TYPE.INDOOR],
@@ -83,9 +84,9 @@ export function PreferencesSection() {
   return (
     <div className="flex flex-col gap-4">
       {preferences.length === 0 && (
-        <div className="rounded-lg border border-dashed border-gray-200 p-8 text-center text-sm text-contentSecondary">
+        <P2 className="rounded-lg border border-dashed border-borderSecondary p-8 text-center text-contentSecondary">
           Brak zapisanych preferencji.
-        </div>
+        </P2>
       )}
 
       {preferences.map((pref) => (

@@ -56,6 +56,63 @@
   box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.5);
 }
 
+.map-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+.map-marker__dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--color-accentDark);
+  border: 3px solid var(--color-contentInverted);
+  box-shadow:
+    0 0 0 1px rgba(11, 26, 18, 0.15),
+    0 2px 6px rgba(11, 26, 18, 0.4);
+}
+
+.map-marker__dot--legend {
+  width: 12px;
+  height: 12px;
+  border-width: 2px;
+  box-shadow:
+    0 0 0 1px rgba(11, 26, 18, 0.12),
+    0 1px 3px rgba(11, 26, 18, 0.35);
+}
+
+.map-marker-selected {
+  position: relative;
+  width: 25px;
+  height: 41px;
+}
+
+.map-marker-selected__label {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: system-ui, -apple-system, sans-serif;
+  font-weight: 700;
+  border-radius: 4px;
+  padding: 1px 1px;
+  background: var(--color-contentInverted);
+  color: #000000;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.scrollbar-none {
+  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

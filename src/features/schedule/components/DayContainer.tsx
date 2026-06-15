@@ -5,10 +5,10 @@ import {
   ClockIcon,
   MapPinIcon,
   CurrencyDollarIcon,
-  TrashIcon,
 } from "@heroicons/react/24/outline";
 import { Divider } from "@/components/design-system/atoms/Divider";
-import { Button } from "@/components/design-system/atoms/Button";
+import { P3 } from "@/components/design-system/typography/Paragraph";
+import { DeleteButton } from "@/components/shared/DeleteButton";
 import {
   SortableContext,
   verticalListSortingStrategy,
@@ -58,14 +58,10 @@ export function DayContainer({
             </div>
           </div>
           {onDeleteDay && (
-            <Button
-              destructive
+            <DeleteButton
               onClick={onDeleteDay}
-              className="px-2 shrink-0"
-              title="Usuń dzień z planu"
-            >
-              <TrashIcon className="h-4 w-4" />
-            </Button>
+              ariaLabel="Usuń dzień z planu"
+            />
           )}
         </div>
       </header>
@@ -87,15 +83,22 @@ export function DayContainer({
                 <div className="relative z-10 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accentBase text-sm font-bold text-white shadow-sm">
                   {index + 1}
                 </div>
-                <PlaceCard
-                  place={place}
-                  onRemove={
-                    onRemovePlace ? () => onRemovePlace(place.id) : undefined
-                  }
-                  onDetailsClick={
-                    onDetailsClick ? () => onDetailsClick(place.id) : undefined
-                  }
-                />
+                <div className="min-w-0 flex-1">
+                  <P3 className="mb-1 flex justify-end text-contentSecondary">
+                    Czas: {formatTime(place.estimatedVisitTime)}
+                  </P3>
+                  <PlaceCard
+                    place={place}
+                    onRemove={
+                      onRemovePlace ? () => onRemovePlace(place.id) : undefined
+                    }
+                    onDetailsClick={
+                      onDetailsClick
+                        ? () => onDetailsClick(place.id)
+                        : undefined
+                    }
+                  />
+                </div>
               </div>
             ))}
           </div>

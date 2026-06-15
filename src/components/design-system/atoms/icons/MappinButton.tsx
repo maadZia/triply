@@ -1,19 +1,19 @@
 import { useState } from "react";
-import { BookmarkIcon as BookmarkOutline } from "@heroicons/react/24/outline";
-import { BookmarkIcon as BookmarkSolid } from "@heroicons/react/24/solid";
+import { MapPinIcon as MapPinSolid } from "@heroicons/react/24/solid";
+import { MapPinIcon as MapPinOutline } from "@heroicons/react/24/outline";
 import { cn } from "@/components/utils";
 
-type BookmarkButtonProps = {
+type MappinButtonProps = {
   onToggle?: (clicked: boolean) => void;
   defaultLiked?: boolean;
   className?: string;
 };
 
-export function BookmarkButton({
+export function MappinButton({
   onToggle,
   defaultLiked = false,
   className,
-}: BookmarkButtonProps) {
+}: MappinButtonProps) {
   const [clicked, setClicked] = useState<boolean>(defaultLiked);
 
   const handleClick = () => {
@@ -25,7 +25,7 @@ export function BookmarkButton({
     }
   };
 
-  const Icon = clicked ? BookmarkSolid : BookmarkOutline;
+  const Icon = clicked ? MapPinSolid : MapPinOutline;
 
   return (
     <button

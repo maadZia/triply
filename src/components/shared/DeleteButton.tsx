@@ -1,4 +1,5 @@
 import { TrashIcon } from "@heroicons/react/24/outline";
+import { Button } from "../design-system/atoms/Button";
 
 interface DeleteButtonProps {
   onClick: () => void;
@@ -12,17 +13,17 @@ export function DeleteButton({
   className = "",
 }: DeleteButtonProps) {
   return (
-    <button
-      type="button"
+    <Button
+      outlineDestructive
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
         onClick();
       }}
       aria-label={ariaLabel}
-      className={`shrink-0 rounded-full p-2 text-contentSecondary transition-colors hover:bg-red-50 hover:text-red-500 ${className}`}
+      className={`shrink-0 p-2 transition-colors ${className}`}
     >
       <TrashIcon className="h-5 w-5" />
-    </button>
+    </Button>
   );
 }

@@ -18,7 +18,7 @@ export function PlaceCardHorizontal({
   onDetailsClick,
 }: PlaceCardHorizontalProps) {
   return (
-    <LightCard className="flex items-start gap-4 p-4">
+    <LightCard className="flex items-start gap-4 p-4 min-w-sm">
       {/* IMAGE */}
       <div className="h-32 w-32 shrink-0 overflow-hidden rounded-lg">
         <img src={img} alt={title} className="h-full w-full object-cover" />
