@@ -12,8 +12,14 @@ export function DesktopFilterSidebar(p: FilterSidebarProps) {
   return (
     <LightCard className="sticky top-4 hidden max-h-[85vh] w-64 space-y-2 overflow-y-auto p-4 scrollbar-none lg:block">
       <div className="flex justify-between">
-        <H2 className="text-base">Filtry</H2>
-        {active > 0 && <span>{active}</span>}
+        <header className="flex items-center gap-2">
+          <H2 className="text-base">Filtry</H2>
+          {active > 0 && (
+            <span className="bg-accentLight text-accentDark rounded-full px-2 py-1 text-xs font-semibold">
+              {active}
+            </span>
+          )}
+        </header>
         <Button plain onClick={p.resetFilters} className="p-0">
           Resetuj
         </Button>

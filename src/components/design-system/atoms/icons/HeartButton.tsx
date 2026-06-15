@@ -21,6 +21,10 @@ export function HeartButton({
   const [clicked, setClicked] = useState<boolean>(defaultLiked);
 
   const handleClick = () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
     const newState = !clicked;
     setClicked(newState);
 
