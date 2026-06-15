@@ -110,15 +110,38 @@ export function PlanView({ plan, onSavePlan }: PlanViewProps) {
     return ids;
   }, [editablePlan.days]);
 
+  const placeMarkerLabels = useMemo(() => {
+    const labels = new globalThis.Map<string, string>();
+    const multiDay = editablePlan.days.length > 1;
+
+    editablePlan.days.forEach((day, dayIndex) => {
+      day.places.forEach((place, placeIndex) => {
+        labels.set(
+          place.id,
+          multiDay
+            ? `D${dayIndex + 1}:${placeIndex + 1}`
+            : String(placeIndex + 1),
+        );
+      });
+    });
+
+    return labels;
+  }, [editablePlan.days]);
+
   const mapMarkers: MapMarker[] = useMemo(() => {
-    return allCityPlaces.map((place) => ({
-      id: place.id,
-      lat: place.location.coordinates!.lat,
-      lng: place.location.coordinates!.lng,
-      label: place.name,
-      selected: selectedPlaceIds.has(place.id),
-    }));
-  }, [allCityPlaces, selectedPlaceIds]);
+    return allCityPlaces.map((place) => {
+      const selected = selectedPlaceIds.has(place.id);
+
+      return {
+        id: place.id,
+        lat: place.location.coordinates!.lat,
+        lng: place.location.coordinates!.lng,
+        label: place.name,
+        selected,
+        markerLabel: selected ? placeMarkerLabels.get(place.id) : undefined,
+      };
+    });
+  }, [allCityPlaces, selectedPlaceIds, placeMarkerLabels]);
 
   const mapCenter = useMemo(() => {
     if (!selectedDay || selectedDay.places.length === 0) {
@@ -770,11 +793,34 @@ export function PlanView({ plan, onSavePlan }: PlanViewProps) {
             <div className="absolute bottom-4 left-4 z-10 rounded-lg bg-white/90 p-3 shadow-md backdrop-blur">
               <div className="space-y-2 text-xs">
                 <div className="flex items-center gap-2">
-                  <span className="h-4 w-4 rounded-full bg-accentBase"></span>
+                  <div className="relative h-5 w-[13px] shrink-0">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 25 41"
+                      className="h-5 w-[13px]"
+                      aria-hidden="true"
+                    >
+                      <path
+                        fill="#ef4444"
+                        d="M12.5 0C5.596 0 0 5.596 0 12.5c0 9.333 12.5 28.5 12.5 28.5S25 21.833 25 12.5C25 5.596 19.404 0 12.5 0z"
+                      />
+                      <path
+                        fill="#dc2626"
+                        d="M12.5 2C6.701 2 2 6.701 2 12.5c0 7.8 10.5 24.5 10.5 24.5S23 20.3 23 12.5C23 6.701 18.299 2 12.5 2z"
+                      />
+                      <circle cx="12.5" cy="12.5" r="5" fill="white" />
+                    </svg>
+                    <span className="absolute left-1/2 top-[3px] -translate-x-1/2 text-[5px] font-bold leading-none text-contentError">
+                      {editablePlan.days.length > 1 ? "D1:1" : "1"}
+                    </span>
+                  </div>
                   <span>W planie</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="h-4 w-4 rounded-full bg-gray-400"></span>
+                  <span
+                    className="map-marker__dot map-marker__dot--legend"
+                    aria-hidden="true"
+                  />
                   <span>Dostępne</span>
                 </div>
               </div>

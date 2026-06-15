@@ -22,7 +22,7 @@ export default function SchedulePlaceholderPage() {
         </P1>
       </div>
 
-      <div className="flex flex-col gap-4 sm:flex-row">
+      <div className="flex flex-col items-center gap-4 sm:flex-row">
         <Button to="/" className="flex items-center gap-2">
           <PlusIcon className="h-5 w-5" />
           Wygeneruj nowy plan
