@@ -189,7 +189,7 @@ Jeżeli użytkownik nie jest zalogowany i kliknie generowanie, aplikacja przekie
 ### Karta atrakcji
 Na przestrzeni aplikacji wykorzystywane są komponenty kart atrakcji. Każdy taki komponent pozwala również na wyświetlanie szczegółów danej atrakcji w postaci okna dialogowego z możliwością dodania atrakcji do planu podróży lub zapisania jej na liście ulubionych.
 
-![Karta atrakcji](./docs/assets/attraction-card.png)
+![Karta atrakcji](./docs/assets/place-details.jpeg)
 
 ### Eksploruj - `/explore`
 
@@ -248,11 +248,11 @@ Najważniejsze funkcjonalności:
 
 ### Harmonogram - `/schedule` i `/schedule/:id`
 
-Harmonogram jest chronioną częścią aplikacji. Ścieżka `/schedule` pokazuje placeholder z wyborem dalszej akcji, natomiast `/schedule/:id` pokazuje konkretny plan. Plan może pochodzić z aktualnie wygenerowanego stanu albo z przygotowanych danych planów.
+Harmonogram jest chronioną częścią aplikacji. Ścieżka `/schedule` pokazuje placeholder z wyborem dalszej akcji, natomiast `/schedule/:id` pokazuje konkretny plan. Plan może pochodzić z aktualnie wygenerowanego stanu albo z zapisanych w profilu planów użytkownika.
 
 Najważniejsze funkcjonalności:
 
-- widok pustego harmonogramu z CTA do wygenerowania planu lub profilu,
+- widok pustego harmonogramu z CTA do wygenerowania planu lub wyboru zapisanego planu z profilu,
 - podgląd wygenerowanego planu pod `/schedule/generated`,
 - podgląd zapisanego planu pod `/schedule/:id`,
 - lista dni podróży,
@@ -263,7 +263,7 @@ Najważniejsze funkcjonalności:
 - dodawanie dni,
 - usuwanie dni,
 - usuwanie miejsc,
-- dodawanie miejsca do planu,
+- dodawanie miejsca do planu bezpośrednio z mapy,
 - drag and drop miejsc w obrębie dnia i pomiędzy dniami,
 - zapis planu lub zmian,
 - responsywny układ desktop/mobile.
@@ -295,7 +295,7 @@ Widok planu korzysta z kilku wyspecjalizowanych hooków, np. `useEditablePlan`, 
 
 ### Profil - `/profile`
 
-Profil jest chronionym widokiem dostępnym tylko dla zalogowanych użytkowników. Strona pokazuje podstawowe dane użytkownika z Firebase oraz trzy zakładki: plany, miejsca i preferencje.
+Profil jest chronionym widokiem dostępnym tylko dla zalogowanych użytkowników. Strona pokazuje podstawowe dane użytkownika z Firebase oraz trzy zakładki: zapisane plany, miejsca i preferencje.
 
 Najważniejsze funkcjonalności:
 
@@ -342,14 +342,13 @@ Powtarzające się elementy UI zostały wydzielone do komponentów, aby utrzyma�
 
 Najważniejsze grupy komponentów:
 
-- `Button`, `Link`, `Divider`, `LoadingDots`,
-- `Input`, `InputGroup`, `CheckboxButton`, `RadioButton`, `Slider`, `Switch`, `Combobox`,
-- `LightCard`, `DarkCard`, `ExpandableCard`,
-- `Tabs` i `TabItem`,
-- `Dialog`, `Popup`, `Toast`,
-- `NavbarDesktop` i `NavbarMobile`,
+- atoms: `Button`, `Link`, `Divider`, `LoadingDots`,
+- forms: `Input`, `InputGroup`, `CheckboxButton`, `RadioButton`, `Slider`, `Switch`, `Combobox`,
+- cards: `LightCard`, `DarkCard`, `ExpandableCard`,
+- navigation: `NavbarDesktop` i `NavbarMobile`, `Tabs` i `TabItem`,
+- overlays: `Dialog`, `Popup`, `Toast`,
 - typografia `H1`, `H2`, `H3`, `P1`, `P2`, `P3`, `Label`,
-- `PlaceCardHorizontal`, `PlaceCardVertical`, `PlaceDetailsDialog`, `GalleryDialog`,
+- karty miejsc w folderze shared: `PlaceCardHorizontal`, `PlaceCardVertical`, `PlaceDetailsDialog`, `GalleryDialog`,
 - `Map` oparty o Leaflet.
 
 Przykładem komponentu wielokrotnego użytku jest `Button`, który obsługuje różne warianty stylu i może działać jako zwykły przycisk albo link routera:
@@ -390,26 +389,26 @@ Fragment tokenów design systemu:
 
 Headless UI jest wykorzystywany tam, gdzie ważna jest dostępność i poprawne zachowanie komponentów bazowych, np. w dialogach, fieldsetach, buttonach i comboboxach. Tailwind odpowiada za warstwę wizualną, spacing, kolory, responsywność i layout.
 
-Menu mobilne korzysta z Framer Motion, dzięki czemu drawer otwiera się i zamyka płynnie. Ikony pochodzą z Heroicons.
+Główna nawigacja i komponent ładowania korzysta z Framer Motion, dzięki czemu wszystkie animacje działają płynnie. Ikony pochodzą z Heroicons.
 
 ## Zastosowane technologie i narzędzia
 
-- React 19 - budowa interfejsu komponentowego.
-- Vite - szybkie środowisko dev i build produkcyjny.
-- TypeScript - typowanie propsów, danych i logiki aplikacji.
-- React Router - routing SPA oraz ochrona tras.
-- Firebase Authentication - logowanie, rejestracja i sesja użytkownika.
-- Tailwind CSS - stylowanie i responsywność.
-- Headless UI - dostępne komponenty bazowe.
-- Heroicons - ikony.
-- Framer Motion - animacje drawer menu mobile.
-- Leaflet i React Leaflet - mapa w harmonogramie.
+- `React 19` - budowa interfejsu komponentowego.
+- `Vite` - szybkie środowisko dev i build produkcyjny.
+- `TypeScript` - typowanie propsów, danych i logiki aplikacji.
+- `React Router` - routing SPA oraz ochrona tras.
+- `Firebase Authentication` - logowanie, rejestracja i sesja użytkownika.
+- `Tailwind CSS` - stylowanie i responsywność.
+- `Headless UI` - dostępne komponenty bazowe.
+- `Heroicons` - ikony.
+- `Framer Motion` - animacje komponentów.
+- `Leaflet` i `React Leaflet` - mapa w harmonogramie.
 - `@dnd-kit` - drag and drop miejsc w planie.
-- pnpm - package manager projektu.
-- ESLint - statyczna analiza kodu.
-- Prettier - automatyczne formatowanie.
-- Husky i lint-staged - automatyczna kontrola jakości przed commitami.
-- PostCSS i Autoprefixer - obsługa Tailwind CSS i kompatybilność CSS.
+- `pnpm` - package manager projektu.
+- `ESLint` - statyczna analiza kodu.
+- `Prettier` - automatyczne formatowanie.
+- `Husky` i `lint-staged` - automatyczna kontrola jakości przed commitami.
+- `PostCSS` i `Autoprefixer` - obsługa Tailwind CSS i kompatybilność CSS.
 
 Skrypty z `package.json`:
 
