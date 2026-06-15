@@ -24,8 +24,8 @@ const variantStyles = {
     hover: "hover:brightness-105 transition duration-200",
   },
   outlineDestructive: {
-    base: "border-1 border-contentDesctructive text-contentDestructive bg-actionDestructive/5",
-    hover: "hover:brightness-105 transition duration-200",
+    base: "border-1 border-contentDesctructive/10 text-contentDesctructive bg-contentDesctructive/10",
+    hover: "hover:bg-contentDesctructive/15 transition duration-200",
   },
 } as const;
 

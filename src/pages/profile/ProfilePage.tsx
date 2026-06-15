@@ -5,6 +5,8 @@ import { useSearchParams } from "react-router-dom";
 import { PlansSection } from "@/features/profile/sections/PlansSection/PlansSection";
 import { PlacesSection } from "@/features/profile/sections/PlacesSection";
 import { PreferencesSection } from "@/features/profile/sections/PreferencesSection/PreferencesSection";
+import { H1 } from "@/components/design-system/typography/Heading";
+import { P2 } from "@/components/design-system/typography/Paragraph";
 
 export default function ProfilePage() {
   const { user, loading } = useAuth();
@@ -44,17 +46,15 @@ export default function ProfilePage() {
   };
 
   return (
-    <main className="mx-auto mt-12 w-full max-w-6xl px-8">
+    <main className="mx-auto w-full px-8">
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between flex-wrap gap-4">
         <div className="space-y-2">
-          <h1 className="text-4xl font-bold text-contentPrimary">
-            Moja Biblioteka
-          </h1>
+          <H1>Moja Biblioteka</H1>
 
-          <p className="text-sm text-contentSecondary">
+          <P2 className="text-contentSecondary">
             Zapisane plany, miejsca i preferencje
-          </p>
+          </P2>
         </div>
 
         {/* Profile */}

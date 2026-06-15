@@ -5,10 +5,9 @@ import {
   ClockIcon,
   MapPinIcon,
   CurrencyDollarIcon,
-  TrashIcon,
 } from "@heroicons/react/24/outline";
 import { Divider } from "@/components/design-system/atoms/Divider";
-import { Button } from "@/components/design-system/atoms/Button";
+import { DeleteButton } from "@/components/shared/DeleteButton";
 import {
   SortableContext,
   verticalListSortingStrategy,
@@ -58,14 +57,10 @@ export function DayContainer({
             </div>
           </div>
           {onDeleteDay && (
-            <Button
-              destructive
+            <DeleteButton
               onClick={onDeleteDay}
-              className="px-2 shrink-0"
-              title="Usuń dzień z planu"
-            >
-              <TrashIcon className="h-4 w-4" />
-            </Button>
+              ariaLabel="Usuń dzień z planu"
+            />
           )}
         </div>
       </header>

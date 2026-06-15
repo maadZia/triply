@@ -1,8 +1,8 @@
 import { ExpandableCard } from "@/components/design-system/cards/ExpandableCard";
 import { Button } from "@/components/design-system/atoms/Button";
-import { countActiveFilters } from "./_utils/config";
+import { countActiveFilters } from "../../utils/config";
 import { FilterContent } from "./FilterContent";
-import type { FilterSidebarProps } from "./_utils/types";
+import type { FilterSidebarProps } from "../../utils/types";
 
 export function MobileFilterSidebar(p: FilterSidebarProps) {
   const active = countActiveFilters(p);

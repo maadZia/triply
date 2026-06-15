@@ -1,17 +1,17 @@
 import { useMemo } from "react";
 import { Combobox } from "@/components/design-system/forms/Combobox";
 import { Slider } from "@/components/design-system/forms/Slider";
-import { ChipGroup } from "../ChipGroup";
-import { toggle } from "./filters";
-import { useCategoryFilters } from "./categories";
+import { ChipGroup } from "../components/FilterSidebar/ChipGroup";
+import { toggle } from "../utils/filters";
+import { useCategoryFilters } from "../utils/categories";
 import {
   CATEGORY_OPTIONS,
   CITY_OPTIONS,
   CROWD_LEVEL_OPTIONS,
   PLACE_TYPE_OPTIONS,
   TARGET_GROUP_OPTIONS,
-} from "./config";
-import type { FilterFieldKey, FilterSidebarProps } from "./types";
+} from "../utils/config";
+import type { FilterFieldKey, FilterSidebarProps } from "../utils/types";
 
 export function useFilterFields(p: FilterSidebarProps) {
   const { selectedCategoryKeys, onToggleCategoryKey } = useCategoryFilters(p);

@@ -1,9 +1,9 @@
 import { Fragment } from "react";
 import { Divider } from "@/components/design-system/atoms/Divider";
 import { FilterSection } from "./FilterSection";
-import { DESKTOP_SECTIONS, MOBILE_SECTIONS } from "./_utils/config";
-import { useFilterFields } from "./_utils/useFilterFields";
-import type { FilterSidebarProps } from "./_utils/types";
+import { DESKTOP_SECTIONS, MOBILE_SECTIONS } from "../../utils/config";
+import { useFilterFields } from "../../hooks/useFilterFields";
+import type { FilterSidebarProps } from "../../utils/types";
 
 export function FilterContent({
   layout,

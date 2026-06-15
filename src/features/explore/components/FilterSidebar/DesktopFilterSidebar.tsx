@@ -2,9 +2,9 @@ import { H2 } from "@/components/design-system/typography/Heading";
 import { Button } from "@/components/design-system/atoms/Button";
 import { Divider } from "@/components/design-system/atoms/Divider";
 import { LightCard } from "@/components/design-system/cards/LightCard";
-import { countActiveFilters } from "./_utils/config";
+import { countActiveFilters } from "../../utils/config";
 import { FilterContent } from "./FilterContent";
-import type { FilterSidebarProps } from "./_utils/types";
+import type { FilterSidebarProps } from "../../utils/types";
 
 export function DesktopFilterSidebar(p: FilterSidebarProps) {
   const active = countActiveFilters(p);
