@@ -5,7 +5,7 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link } from "@/components/design-system/atoms/Link";
 import { NAVBAR_LINKS_GUEST, NAVBAR_LINKS_USER } from "./navbarLinks";
 import { Button } from "@/components/design-system/atoms/Button";
-import { useAuth } from "@/providers/AuthContext";
+import { useAuth } from "@/auth/AuthContext";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { NavbarItemMobile } from "./NavbarItemMobile";

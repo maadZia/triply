@@ -7,6 +7,7 @@ import {
   CurrencyDollarIcon,
 } from "@heroicons/react/24/outline";
 import { Divider } from "@/components/design-system/atoms/Divider";
+import { P3 } from "@/components/design-system/typography/Paragraph";
 import { DeleteButton } from "@/components/shared/DeleteButton";
 import {
   SortableContext,
@@ -82,15 +83,22 @@ export function DayContainer({
                 <div className="relative z-10 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accentBase text-sm font-bold text-white shadow-sm">
                   {index + 1}
                 </div>
-                <PlaceCard
-                  place={place}
-                  onRemove={
-                    onRemovePlace ? () => onRemovePlace(place.id) : undefined
-                  }
-                  onDetailsClick={
-                    onDetailsClick ? () => onDetailsClick(place.id) : undefined
-                  }
-                />
+                <div className="min-w-0 flex-1">
+                  <P3 className="mb-1 flex justify-end text-contentSecondary">
+                    Czas: {formatTime(place.estimatedVisitTime)}
+                  </P3>
+                  <PlaceCard
+                    place={place}
+                    onRemove={
+                      onRemovePlace ? () => onRemovePlace(place.id) : undefined
+                    }
+                    onDetailsClick={
+                      onDetailsClick
+                        ? () => onDetailsClick(place.id)
+                        : undefined
+                    }
+                  />
+                </div>
               </div>
             ))}
           </div>

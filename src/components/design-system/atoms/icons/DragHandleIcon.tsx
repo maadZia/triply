@@ -17,7 +17,7 @@ export const DragHandleIcon = React.forwardRef<
       type="button"
       data-drag-handle
       className={cn(
-        "inline-flex h-8 w-8 items-center justify-center rounded-lg",
+        "inline-flex items-center justify-center rounded-lg",
         "text-contentTertiary transition-colors duration-150",
         "hover:bg-accentLight/30 hover:text-contentPrimary",
         isDragging && "cursor-grabbing text-accentDark bg-accentBase/10",

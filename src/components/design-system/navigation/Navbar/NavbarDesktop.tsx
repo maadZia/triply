@@ -5,7 +5,7 @@ import { NAVBAR_LINKS_GUEST, NAVBAR_LINKS_USER } from "./navbarLinks";
 import { Button } from "@/components/design-system/atoms/Button";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
-import { useAuth } from "@/providers/AuthContext";
+import { useAuth } from "@/auth/AuthContext";
 
 export function NavbarDesktop() {
   const { pathname } = useLocation();

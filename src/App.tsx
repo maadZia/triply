@@ -7,10 +7,11 @@ import SchedulePlaceholderPage from "./pages/schedule/SchedulePlaceholderPage";
 import ProfilePage from "@/pages/profile/ProfilePage";
 import LoginPage from "@/pages/auth/LoginPage";
 import RegisterPage from "@/pages/auth/RegisterPage";
-import { GeneratedPlanProvider } from "@/context/GeneratedPlanProvider";
+import { GeneratedPlanProvider } from "@/context/plan/GeneratedPlanProvider";
+import { ToastProvider } from "@/context/toast/ToastProvider";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import PrivacyPolicyPage from "@/pages/legal/PrivacyPolicyPage";
-import { useAuth } from "@/providers/AuthContext";
+import { useAuth } from "@/auth/AuthContext";
 import { LoadingDots } from "@/components/design-system/atoms/LoadingDots";
 
 function App() {
@@ -25,29 +26,31 @@ function App() {
   }
   return (
     <BrowserRouter>
-      <GeneratedPlanProvider>
-        <Routes>
-          <Route element={<MainLayout />}>
-            {/* Public routes — accessible to everyone */}
-            <Route path="/" element={<HomePage />} />
-            <Route path="/explore" element={<ExplorePage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+      <ToastProvider>
+        <GeneratedPlanProvider>
+          <Routes>
+            <Route element={<MainLayout />}>
+              {/* Public routes — accessible to everyone */}
+              <Route path="/" element={<HomePage />} />
+              <Route path="/explore" element={<ExplorePage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
 
-            {/* Protected routes — require authentication */}
-            <Route element={<ProtectedRoute />}>
-              {/* /schedule - placeholder/redirect page */}
-              <Route path="/schedule" element={<SchedulePlaceholderPage />} />
+              {/* Protected routes — require authentication */}
+              <Route element={<ProtectedRoute />}>
+                {/* /schedule - placeholder/redirect page */}
+                <Route path="/schedule" element={<SchedulePlaceholderPage />} />
 
-              {/* /schedule/:id - plan view (generated or from backend) */}
-              <Route path="/schedule/:id" element={<SchedulePage />} />
+                {/* /schedule/:id - plan view (generated or from backend) */}
+                <Route path="/schedule/:id" element={<SchedulePage />} />
 
-              <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/profile" element={<ProfilePage />} />
+              </Route>
             </Route>
-          </Route>
-        </Routes>
-      </GeneratedPlanProvider>
+          </Routes>
+        </GeneratedPlanProvider>
+      </ToastProvider>
     </BrowserRouter>
   );
 }

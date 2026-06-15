@@ -1,646 +1,92 @@
-import {
-  useState,
-  lazy,
-  Suspense,
-  useMemo,
-  useRef,
-  useEffect,
-  useCallback,
-} from "react";
-import type { GeneratedPlan, DayPlan, PlanPlace } from "@/types/plan";
-import { formatDateForDisplay, calculateDate } from "@/types/plan";
-import type { Place } from "@/types/places";
+import { useState } from "react";
+import type { GeneratedPlan } from "@/types/plan";
+import { formatDateForDisplay } from "@/types/plan";
 import { Button } from "@/components/design-system/atoms/Button";
 import { DayTabs } from "@/features/schedule/components/DayTabs";
 import { DayContainer } from "./DayContainer";
 import { EmptyPlanState } from "./EmptyPlanState";
 import { PlaceDetailsDialog } from "@/components/shared/PlaceDetails/PlaceDetailsDialog";
-import { getPlacesByCity } from "@/mock/places";
-import { toDialogPlace } from "@/utils/placeMapper";
-import type { MapMarker } from "@/components/design-system/atoms/Map";
-import { H2 } from "@/components/design-system/typography/Heading";
-import { P3 } from "@/components/design-system/typography/Paragraph";
-import { Alert } from "@/components/design-system/atoms/Alert";
 import { Popup } from "@/components/design-system/overlays/Popup";
-import {
-  PlusIcon,
-  PencilIcon,
-  CheckIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
-import { Input } from "@/components/design-system/forms/Input";
-
-// DnD imports
-import {
-  DndContext,
-  DragOverlay,
-  closestCorners,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  type DragStartEvent,
-  type DragOverEvent,
-  type DragEndEvent,
-  defaultDropAnimationSideEffects,
-  type DropAnimation,
-} from "@dnd-kit/core";
-import { arrayMove } from "@dnd-kit/sortable";
+import { PlusIcon } from "@heroicons/react/24/outline";
+import { DndContext, DragOverlay, closestCorners } from "@dnd-kit/core";
 import { PlaceCard } from "./PlaceCard";
-
-const Map = lazy(() =>
-  import("@/components/design-system/atoms/Map").then((module) => ({
-    default: module.Map,
-  })),
-);
+import { Tabs, TabItem } from "@/components/design-system/navigation/Tabs";
+import { ExpandableCard } from "@/components/design-system/cards/ExpandableCard";
+import { PlanHeaderSection } from "./PlanHeaderSection";
+import { PlanMapPanel } from "./PlanMapPanel";
+import { PlanAlerts } from "./PlanAlerts";
+import { useEditablePlan } from "@/features/schedule/hooks/useEditablePlan";
+import { usePlanDaySelection } from "@/features/schedule/hooks/usePlanDaySelection";
+import { usePlanMapData } from "@/features/schedule/hooks/usePlanMapData";
+import { usePlanNameEditing } from "@/features/schedule/hooks/usePlanNameEditing";
+import { usePlanPlaceDialog } from "@/features/schedule/hooks/usePlanPlaceDialog";
+import { usePlanDayManagement } from "@/features/schedule/hooks/usePlanDayManagement";
+import { useMediaQuery } from "usehooks-ts";
+import { usePlanDragAndDrop } from "@/features/schedule/hooks/usePlanDragAndDrop";
 
 interface PlanViewProps {
   plan: GeneratedPlan;
   onSavePlan?: () => void;
 }
 
+type MobileViewTab = "plan" | "map";
+
 export function PlanView({ plan, onSavePlan }: PlanViewProps) {
-  const [selectedDayIndex, setSelectedDayIndex] = useState(0);
-  const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editablePlan, setEditablePlan] = useState<GeneratedPlan>(plan);
-  const [hasModifications, setHasModifications] = useState(false);
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [dayToDeleteIndex, setDayToDeleteIndex] = useState<number | null>(null);
-  const [isEditingName, setIsEditingName] = useState(false);
-  const [planNameInput, setPlanNameInput] = useState(editablePlan.name || "");
-  const prevPlanIdRef = useRef(plan.id);
+  const { editablePlan, updatePlan, hasModifications } = useEditablePlan(plan);
+  const { selectedDayIndex, setSelectedDayIndex, selectedDay } =
+    usePlanDaySelection(editablePlan);
+  const { allCityPlaces, selectedPlaceIds, mapMarkers, mapCenter } =
+    usePlanMapData(editablePlan, selectedDay);
+  const nameEditing = usePlanNameEditing(plan, editablePlan, updatePlan);
+  const placeDialog = usePlanPlaceDialog({
+    selectedDayIndex,
+    updatePlan,
+    allCityPlaces,
+    selectedPlaceIds,
+  });
+  const dayManagement = usePlanDayManagement({
+    editablePlan,
+    updatePlan,
+    selectedDayIndex,
+    setSelectedDayIndex,
+  });
+  const dnd = usePlanDragAndDrop({
+    editablePlan,
+    updatePlan,
+    setSelectedDayIndex,
+  });
+  const [mobileViewTab, setMobileViewTab] = useState<MobileViewTab>("plan");
+  const isLgUp = useMediaQuery("(min-width: 1024px)");
 
-  // DnD state
-  const [activeDrag, setActiveDrag] = useState<{
-    placeId: string;
-    sourceDayIndex: number;
-    place: PlanPlace;
-  } | null>(null);
-  const [dragOverDayIndex, setDragOverDayIndex] = useState<number | null>(null);
+  const dayTabsData = editablePlan.days.map((day) => ({
+    id: day.day,
+    label: `Dzień ${day.day}`,
+    date: day.date ? formatDateForDisplay(day.date) : undefined,
+  }));
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8, // Minimalna odległość przeciągnięcia aby aktywować drag
-      },
-    }),
+  const selectedDayTitle = selectedDay ? (
+    <span>
+      Dzień {selectedDay.day}
+      {selectedDay.date && (
+        <span className="font-normal text-contentSecondary">
+          {" · "}
+          {formatDateForDisplay(selectedDay.date)}
+        </span>
+      )}
+    </span>
+  ) : (
+    "Wybierz dzień"
   );
 
-  useEffect(() => {
-    if (prevPlanIdRef.current !== plan.id) {
-      setEditablePlan(plan);
-      setHasModifications(false);
-      setPlanNameInput(plan.name || "");
-      setIsEditingName(false);
-      prevPlanIdRef.current = plan.id;
-    }
-  }, [plan]);
-
-  const selectedDay = editablePlan.days[selectedDayIndex];
-
-  const allCityPlaces = useMemo(() => {
-    return getPlacesByCity(editablePlan.city);
-  }, [editablePlan.city]);
-
-  const selectedPlaceIds = useMemo(() => {
-    const ids = new Set<string>();
-    editablePlan.days.forEach((day) => {
-      day.places.forEach((place) => ids.add(place.id));
-    });
-    return ids;
-  }, [editablePlan.days]);
-
-  const placeMarkerLabels = useMemo(() => {
-    const labels = new globalThis.Map<string, string>();
-    const multiDay = editablePlan.days.length > 1;
-
-    editablePlan.days.forEach((day, dayIndex) => {
-      day.places.forEach((place, placeIndex) => {
-        labels.set(
-          place.id,
-          multiDay
-            ? `D${dayIndex + 1}:${placeIndex + 1}`
-            : String(placeIndex + 1),
-        );
-      });
-    });
-
-    return labels;
-  }, [editablePlan.days]);
-
-  const mapMarkers: MapMarker[] = useMemo(() => {
-    return allCityPlaces.map((place) => {
-      const selected = selectedPlaceIds.has(place.id);
-
-      return {
-        id: place.id,
-        lat: place.location.coordinates!.lat,
-        lng: place.location.coordinates!.lng,
-        label: place.name,
-        selected,
-        markerLabel: selected ? placeMarkerLabels.get(place.id) : undefined,
-      };
-    });
-  }, [allCityPlaces, selectedPlaceIds, placeMarkerLabels]);
-
-  const mapCenter = useMemo(() => {
-    if (!selectedDay || selectedDay.places.length === 0) {
-      if (allCityPlaces.length > 0) {
-        return [
-          allCityPlaces[0].location.coordinates!.lat,
-          allCityPlaces[0].location.coordinates!.lng,
-        ] as [number, number];
-      }
-      return [50.0614, 19.9372] as [number, number]; // Default: Kraków
-    }
-    return [
-      selectedDay.stats.centerPoint.lat,
-      selectedDay.stats.centerPoint.lng,
-    ] as [number, number];
-  }, [selectedDay, allCityPlaces]);
-
-  const handleMarkerClick = (marker: MapMarker) => {
-    const place = allCityPlaces.find((p) => p.id === marker.id);
-    if (place) {
-      setSelectedPlace(place);
-      setIsDialogOpen(true);
-    }
-  };
-
-  const isSelectedPlaceInPlan = useMemo(() => {
-    if (!selectedPlace) return false;
-    return selectedPlaceIds.has(selectedPlace.id);
-  }, [selectedPlace, selectedPlaceIds]);
-
-  const handleAddToPlan = () => {
-    if (!selectedPlace) return;
-
-    setEditablePlan((prevPlan) => {
-      const newDays = [...prevPlan.days];
-      const targetDay = { ...newDays[selectedDayIndex] };
-
-      const newPlace = {
-        id: selectedPlace.id,
-        name: selectedPlace.name,
-        description: selectedPlace.description,
-        mainImage: selectedPlace.mainImage,
-        rating: selectedPlace.rating,
-        location: {
-          address: selectedPlace.location.address,
-          lat: selectedPlace.location.coordinates!.lat,
-          lng: selectedPlace.location.coordinates!.lng,
-        },
-        price: selectedPlace.price,
-        estimatedVisitTime: selectedPlace.estimatedVisitTime ?? 60,
-        type: selectedPlace.type,
-        categories: selectedPlace.categories,
-      };
-
-      targetDay.places = [...targetDay.places, newPlace];
-      targetDay.stats = {
-        ...targetDay.stats,
-        totalPlaces: targetDay.stats.totalPlaces + 1,
-        totalTime:
-          targetDay.stats.totalTime + (selectedPlace.estimatedVisitTime ?? 60),
-        totalPrice: targetDay.stats.totalPrice + selectedPlace.price.normal,
-      };
-
-      newDays[selectedDayIndex] = targetDay;
-
-      const newTotalPlaces = prevPlan.stats.totalPlaces + 1;
-      const newTotalPrice =
-        prevPlan.stats.totalPrice + selectedPlace.price.normal;
-
-      return {
-        ...prevPlan,
-        days: newDays,
-        stats: {
-          ...prevPlan.stats,
-          totalPlaces: newTotalPlaces,
-          totalPrice: newTotalPrice,
-        },
-      };
-    });
-
-    setHasModifications(true);
-    setIsDialogOpen(false);
-  };
-
-  const handleRemovePlace = (placeId: string) => {
-    setEditablePlan((prevPlan) => {
-      const newDays = [...prevPlan.days];
-      const targetDay = { ...newDays[selectedDayIndex] };
-
-      const placeToRemove = targetDay.places.find((p) => p.id === placeId);
-      if (!placeToRemove) return prevPlan;
-
-      targetDay.places = targetDay.places.filter((p) => p.id !== placeId);
-      targetDay.stats = {
-        ...targetDay.stats,
-        totalPlaces: targetDay.stats.totalPlaces - 1,
-        totalTime: targetDay.stats.totalTime - placeToRemove.estimatedVisitTime,
-        totalPrice: targetDay.stats.totalPrice - placeToRemove.price.normal,
-      };
-
-      newDays[selectedDayIndex] = targetDay;
-
-      const newTotalPlaces = prevPlan.stats.totalPlaces - 1;
-      const newTotalPrice =
-        prevPlan.stats.totalPrice - placeToRemove.price.normal;
-
-      return {
-        ...prevPlan,
-        days: newDays,
-        stats: {
-          ...prevPlan.stats,
-          totalPlaces: newTotalPlaces,
-          totalPrice: newTotalPrice,
-        },
-      };
-    });
-
-    setHasModifications(true);
-  };
-
-  const handleDetailsClick = (placeId: string) => {
-    const place = allCityPlaces.find((p) => p.id === placeId);
-    if (place) {
-      setSelectedPlace(place);
-      setIsDialogOpen(true);
-    }
-  };
-
-  // Funkcje obsługi edycji nazwy planu
-  const handleStartEditingName = useCallback(() => {
-    setIsEditingName(true);
-    setPlanNameInput(editablePlan.name || "");
-  }, [editablePlan.name]);
-
-  const handleSaveName = useCallback(() => {
-    const trimmedName = planNameInput.trim();
-    setEditablePlan((prev) => ({
-      ...prev,
-      name: trimmedName || undefined,
-    }));
-    setHasModifications(true);
-    setIsEditingName(false);
-  }, [planNameInput]);
-
-  const handleCancelEditName = useCallback(() => {
-    setPlanNameInput(editablePlan.name || "");
-    setIsEditingName(false);
-  }, [editablePlan.name]);
-
-  const handleNameInputKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Enter") {
-        handleSaveName();
-      } else if (e.key === "Escape") {
-        handleCancelEditName();
-      }
-    },
-    [handleSaveName, handleCancelEditName],
-  );
-
-  // Funkcja otwierająca dialog potwierdzenia usunięcia dnia
-  const handleDeleteDayRequest = useCallback((dayIndex: number) => {
-    setDayToDeleteIndex(dayIndex);
-    setIsPopupOpen(true);
-  }, []);
-
-  // Funkcja potwierdzająca usunięcie dnia
-  const handleConfirmDeleteDay = useCallback(() => {
-    if (dayToDeleteIndex === null) return;
-
-    const dayIndex = dayToDeleteIndex;
-
-    setEditablePlan((prevPlan) => {
-      // Usuwamy dzień i przenumerowujemy pozostałe
-      const newDays = prevPlan.days
-        .filter((_, idx) => idx !== dayIndex)
-        .map((day, idx) => ({ ...day, day: idx + 1 }));
-
-      // Przeliczamy statystyki planu
-      const newTotalPlaces = newDays.reduce(
-        (sum, day) => sum + day.stats.totalPlaces,
-        0,
-      );
-      const newTotalPrice = newDays.reduce(
-        (sum, day) => sum + day.stats.totalPrice,
-        0,
-      );
-
-      return {
-        ...prevPlan,
-        days: newDays,
-        stats: {
-          ...prevPlan.stats,
-          totalDays: newDays.length,
-          totalPlaces: newTotalPlaces,
-          totalPrice: newTotalPrice,
-        },
-      };
-    });
-
-    setHasModifications(true);
-    setIsPopupOpen(false);
-    setDayToDeleteIndex(null);
-
-    // Jeśli usunięty dzień był wybrany, dostosuj selectedDayIndex
-    if (selectedDayIndex >= dayIndex && selectedDayIndex > 0) {
-      setSelectedDayIndex((prev) => prev - 1);
-    } else if (
-      selectedDayIndex >= dayIndex &&
-      selectedDayIndex === 0 &&
-      editablePlan.days.length > 1
-    ) {
-      // Pozostajemy na indeksie 0, bo to teraz następny dzień
-    }
-  }, [dayToDeleteIndex, selectedDayIndex, editablePlan.days.length]);
-
-  // Funkcja anulująca usunięcie dnia
-  const handleCancelDeleteDay = useCallback(() => {
-    setIsPopupOpen(false);
-    setDayToDeleteIndex(null);
-  }, []);
-
-  // Funkcja dodająca nowy pusty dzień
-  const handleAddDay = useCallback(() => {
-    setEditablePlan((prevPlan) => {
-      const newDayNumber = prevPlan.days.length + 1;
-      // Obliczamy datę dla nowego dnia na podstawie startDate
-      const newDate = calculateDate(
-        prevPlan.filters.startDate,
-        newDayNumber - 1,
-      );
-
-      // Ustalamy centerPoint na podstawie ostatniego dnia lub domyślne
-      const lastDay = prevPlan.days[prevPlan.days.length - 1];
-      const centerPoint = lastDay
-        ? lastDay.stats.centerPoint
-        : { lat: 50.0614, lng: 19.9372 }; // Default: Kraków
-
-      const newDay: DayPlan = {
-        day: newDayNumber,
-        date: newDate,
-        places: [],
-        stats: {
-          totalPlaces: 0,
-          totalTime: 0,
-          totalPrice: 0,
-          centerPoint,
-        },
-      };
-
-      return {
-        ...prevPlan,
-        days: [...prevPlan.days, newDay],
-        stats: {
-          ...prevPlan.stats,
-          totalDays: newDayNumber,
-        },
-      };
-    });
-
-    setHasModifications(true);
-    // Przejdź do nowo dodanego dnia
-    setSelectedDayIndex(editablePlan.days.length);
-  }, [editablePlan.days.length]);
-
-  // ========== DnD Functions ==========
-
-  const findPlaceInPlan = useCallback(
-    (placeId: string): { dayIndex: number; placeIndex: number } | null => {
-      for (let dayIndex = 0; dayIndex < editablePlan.days.length; dayIndex++) {
-        const placeIndex = editablePlan.days[dayIndex].places.findIndex(
-          (p) => p.id === placeId,
-        );
-        if (placeIndex !== -1) {
-          return { dayIndex, placeIndex };
-        }
-      }
-      return null;
-    },
-    [editablePlan.days],
-  );
-
-  const reorderPlacesInDay = useCallback(
-    (dayIndex: number, oldIndex: number, newIndex: number) => {
-      setEditablePlan((prev) => {
-        const newDays = [...prev.days];
-        const targetDay = { ...newDays[dayIndex] };
-
-        targetDay.places = arrayMove(targetDay.places, oldIndex, newIndex);
-
-        newDays[dayIndex] = targetDay;
-
-        return {
-          ...prev,
-          days: newDays,
-        };
-      });
-      setHasModifications(true);
-    },
-    [],
-  );
-
-  const movePlaceBetweenDays = useCallback(
-    (
-      sourceDayIndex: number,
-      targetDayIndex: number,
-      placeId: string,
-      targetIndex?: number,
-    ) => {
-      setEditablePlan((prev) => {
-        const newDays = prev.days.map((day) => ({
-          ...day,
-          places: [...day.places],
-        }));
-
-        const sourceDay = newDays[sourceDayIndex];
-        const targetDay = newDays[targetDayIndex];
-
-        // Znajdź i usuń miejsce z dnia źródłowego
-        const placeIndex = sourceDay.places.findIndex((p) => p.id === placeId);
-        if (placeIndex === -1) return prev;
-
-        const [place] = sourceDay.places.splice(placeIndex, 1);
-
-        // Dodaj do dnia docelowego
-        if (targetIndex !== undefined && targetIndex >= 0) {
-          targetDay.places.splice(targetIndex, 0, place);
-        } else {
-          targetDay.places.push(place);
-        }
-
-        // Przelicz statystyki dnia źródłowego
-        sourceDay.stats = {
-          ...sourceDay.stats,
-          totalPlaces: sourceDay.places.length,
-          totalTime: sourceDay.places.reduce(
-            (sum, p) => sum + p.estimatedVisitTime,
-            0,
-          ),
-          totalPrice: sourceDay.places.reduce(
-            (sum, p) => sum + p.price.normal,
-            0,
-          ),
-        };
-
-        // Przelicz statystyki dnia docelowego
-        targetDay.stats = {
-          ...targetDay.stats,
-          totalPlaces: targetDay.places.length,
-          totalTime: targetDay.places.reduce(
-            (sum, p) => sum + p.estimatedVisitTime,
-            0,
-          ),
-          totalPrice: targetDay.places.reduce(
-            (sum, p) => sum + p.price.normal,
-            0,
-          ),
-        };
-
-        // Przelicz globalne statystyki planu
-        const totalPlaces = newDays.reduce(
-          (sum, day) => sum + day.stats.totalPlaces,
-          0,
-        );
-        const totalPrice = newDays.reduce(
-          (sum, day) => sum + day.stats.totalPrice,
-          0,
-        );
-
-        return {
-          ...prev,
-          days: newDays,
-          stats: {
-            ...prev.stats,
-            totalPlaces,
-            totalPrice,
-          },
-        };
-      });
-      setHasModifications(true);
-    },
-    [],
-  );
-
-  const handleDragStart = useCallback(
-    (event: DragStartEvent) => {
-      const { active } = event;
-      const placeId = active.id as string;
-
-      const location = findPlaceInPlan(placeId);
-      if (!location) return;
-
-      const place =
-        editablePlan.days[location.dayIndex].places[location.placeIndex];
-
-      setActiveDrag({
-        placeId,
-        sourceDayIndex: location.dayIndex,
-        place,
-      });
-    },
-    [editablePlan.days, findPlaceInPlan],
-  );
-
-  const handleDragOver = useCallback((event: DragOverEvent) => {
-    const { over } = event;
-
-    if (!over) {
-      setDragOverDayIndex(null);
-      return;
-    }
-
-    const overId = over.id.toString();
-
-    // Sprawdź czy nad zakładką dnia
-    if (overId.startsWith("day-tab-")) {
-      const dayIndex = parseInt(overId.replace("day-tab-", ""), 10);
-      setDragOverDayIndex(dayIndex);
-    } else {
-      setDragOverDayIndex(null);
-    }
-  }, []);
-
-  const handleDragEnd = useCallback(
-    (event: DragEndEvent) => {
-      const { active, over } = event;
-
-      setActiveDrag(null);
-      setDragOverDayIndex(null);
-
-      if (!over) return;
-
-      const placeId = active.id as string;
-      const overId = over.id.toString();
-
-      const location = findPlaceInPlan(placeId);
-      if (!location) return;
-
-      const { dayIndex: sourceDayIndex, placeIndex: sourcePlaceIndex } =
-        location;
-
-      // Sprawdź czy upuszczono na zakładkę dnia
-      if (overId.startsWith("day-tab-")) {
-        const targetDayIndex = parseInt(overId.replace("day-tab-", ""), 10);
-
-        if (targetDayIndex !== sourceDayIndex) {
-          // Przenieś na koniec innego dnia
-          movePlaceBetweenDays(sourceDayIndex, targetDayIndex, placeId);
-          // Przełącz widok na ten dzień
-          setSelectedDayIndex(targetDayIndex);
-        }
-        return;
-      }
-
-      // Sprawdź czy upuszczono na inne miejsce w tym samym dniu
-      const targetPlaceId = overId;
-      const targetLocation = findPlaceInPlan(targetPlaceId);
-
-      if (!targetLocation) return;
-
-      const { dayIndex: targetDayIndex, placeIndex: targetPlaceIndex } =
-        targetLocation;
-
-      if (sourceDayIndex === targetDayIndex) {
-        // Ten sam dzień - zmień kolejność
-        if (sourcePlaceIndex !== targetPlaceIndex) {
-          reorderPlacesInDay(
-            sourceDayIndex,
-            sourcePlaceIndex,
-            targetPlaceIndex,
-          );
-        }
-      } else {
-        // Inny dzień - przenieś przed/za docelowe miejsce
-        movePlaceBetweenDays(
-          sourceDayIndex,
-          targetDayIndex,
-          placeId,
-          targetPlaceIndex,
-        );
-      }
-    },
-    [findPlaceInPlan, movePlaceBetweenDays, reorderPlacesInDay],
-  );
-
-  const dropAnimation: DropAnimation = {
-    sideEffects: defaultDropAnimationSideEffects({
-      styles: {
-        active: {
-          opacity: "0.5",
-        },
-      },
-    }),
-  };
-
-  const placeForDialog = useMemo(() => {
-    if (!selectedPlace) return undefined;
-    return toDialogPlace(selectedPlace);
-  }, [selectedPlace]);
+  const saveButton = onSavePlan ? (
+    <Button
+      onClick={onSavePlan}
+      disabled={plan.id !== "generated" && !hasModifications}
+      className="flex shrink-0 items-center gap-1 text-sm"
+    >
+      {plan.id === "generated" ? "Zapisz plan" : "Zapisz zmiany"}
+    </Button>
+  ) : null;
 
   if (!editablePlan.days.length) {
     return <EmptyPlanState message="Plan nie zawiera żadnych dni" />;
@@ -648,211 +94,177 @@ export function PlanView({ plan, onSavePlan }: PlanViewProps) {
 
   return (
     <DndContext
-      sensors={sensors}
+      sensors={dnd.sensors}
       collisionDetection={closestCorners}
-      onDragStart={handleDragStart}
-      onDragOver={handleDragOver}
-      onDragEnd={handleDragEnd}
+      onDragStart={dnd.handleDragStart}
+      onDragOver={dnd.handleDragOver}
+      onDragEnd={dnd.handleDragEnd}
     >
-      <div className="flex min-h-[80vh] overflow-hidden gap-4">
-        {/* ── Column 1: Day picker ── */}
-        <aside className="w-56 shrink-0 overflow-y-auto">
-          <div className="p-4 space-y-1">
-            {isEditingName ? (
-              <div className="flex items-center gap-1">
-                <Input
-                  value={planNameInput}
-                  onChange={(e) => setPlanNameInput(e.target.value)}
-                  onKeyDown={handleNameInputKeyDown}
-                  placeholder="Nazwa planu"
-                  autoFocus
-                  className="min-w-40"
-                />
-                <Button
-                  plain
-                  onClick={handleSaveName}
-                  className="p-0 shrink-0 text-accentDark"
-                  title="Zapisz nazwę"
-                >
-                  <CheckIcon className="h-4 w-4" />
-                </Button>
-                <Button
-                  plain
-                  onClick={handleCancelEditName}
-                  className="p-0 shrink-0 text-contentDesctructive"
-                  title="Anuluj"
-                >
-                  <XMarkIcon className="h-4 w-4" />
-                </Button>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                <H2 className="flex-1 truncate">
-                  {editablePlan.name ||
-                    (plan.id === "generated" ? "Nowy plan" : "Plan bez nazwy")}
-                </H2>
-                <Button
-                  plain
-                  onClick={handleStartEditingName}
-                  className="h-7 w-7 p-0 shrink-0 text-contentSecondary hover:text-accentDark"
-                  title="Edytuj nazwę"
-                >
-                  <PencilIcon className="h-3.5 w-3.5" />
-                </Button>
-              </div>
-            )}
-            <P3 className="text-contentSecondary">{editablePlan.city}</P3>
-          </div>
-
-          <DayTabs
-            days={editablePlan.days.map((day) => ({
-              id: day.day,
-              label: `Dzień ${day.day}`,
-              date: day.date ? formatDateForDisplay(day.date) : undefined,
-            }))}
-            selectedIndex={selectedDayIndex}
-            onSelect={setSelectedDayIndex}
-            dragOverDayIndex={dragOverDayIndex}
-          />
-
-          <div className="px-4 pb-4">
-            <Button
-              outline
-              onClick={handleAddDay}
-              className="w-full flex items-center justify-center gap-2"
-            >
-              <PlusIcon className="h-4 w-4" />
-              Dodaj dzień
-            </Button>
-          </div>
-        </aside>
-
-        {/* ── Column 2: Places list ── */}
-        <section className="max-w-xl overflow-y-auto">
-          {/* Alert dla generated planu - zawsze pokazujemy */}
-          {plan.id === "generated" && (
-            <Alert variant="warning" className="mb-4" title="Niezapisany plan">
-              Zapisz plan, aby móc do niego później wrócić.
-            </Alert>
-          )}
-          {/* Alert dla zapisanego planu - tylko gdy są zmiany */}
-          {plan.id !== "generated" && hasModifications && (
-            <Alert
-              variant="warning"
-              className="mb-4"
-              title="Niezapisane zmiany"
-            >
-              Wprowadzono zmiany w planie. Zapisz zmiany, aby nie utracić
-              modyfikacji.
-            </Alert>
-          )}
-          <DayContainer
-            day={selectedDay}
-            onDetailsClick={handleDetailsClick}
-            onRemovePlace={handleRemovePlace}
-            onDeleteDay={
-              editablePlan.days.length > 1
-                ? () => handleDeleteDayRequest(selectedDayIndex)
-                : undefined
-            }
-          />
-        </section>
-
-        {/* ── Column 3: Map ── */}
-        <section className="flex flex-col flex-1 max-h-[calc(100vh-100px)] gap-8">
-          {/* Przycisk zapisywania */}
-          <div className="flex items-center justify-end">
-            {onSavePlan && (
-              <Button
-                onClick={onSavePlan}
-                disabled={plan.id !== "generated" && !hasModifications}
-                className="flex items-center gap-1 text-sm"
-              >
-                {plan.id === "generated" ? "Zapisz plan" : "Zapisz zmiany"}
-              </Button>
-            )}
-          </div>
-
-          <div className="flex-1 overflow-hidden relative rounded-xl border border-borderSecondary">
-            <Suspense
-              fallback={
-                <div className="flex h-full items-center justify-center text-sm text-gray-400">
-                  Ładowanie mapy…
-                </div>
-              }
-            >
-              <Map
-                center={mapCenter}
-                zoom={14}
-                markers={mapMarkers}
-                onMarkerClick={handleMarkerClick}
+      {isLgUp ? (
+        <div className="flex min-h-[80vh] gap-2 overflow-hidden">
+          <aside className="w-56 shrink-0 overflow-y-auto">
+            <div className="p-4">
+              <PlanHeaderSection
+                planId={plan.id}
+                editablePlan={editablePlan}
+                nameEditing={nameEditing}
               />
-            </Suspense>
-
-            {/* Legenda mapy */}
-            <div className="absolute bottom-4 left-4 z-10 rounded-lg bg-white/90 p-3 shadow-md backdrop-blur">
-              <div className="space-y-2 text-xs">
-                <div className="flex items-center gap-2">
-                  <div className="relative h-5 w-[13px] shrink-0">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 25 41"
-                      className="h-5 w-[13px]"
-                      aria-hidden="true"
-                    >
-                      <path
-                        fill="#ef4444"
-                        d="M12.5 0C5.596 0 0 5.596 0 12.5c0 9.333 12.5 28.5 12.5 28.5S25 21.833 25 12.5C25 5.596 19.404 0 12.5 0z"
-                      />
-                      <path
-                        fill="#dc2626"
-                        d="M12.5 2C6.701 2 2 6.701 2 12.5c0 7.8 10.5 24.5 10.5 24.5S23 20.3 23 12.5C23 6.701 18.299 2 12.5 2z"
-                      />
-                      <circle cx="12.5" cy="12.5" r="5" fill="white" />
-                    </svg>
-                    <span className="absolute left-1/2 top-[3px] -translate-x-1/2 text-[5px] font-bold leading-none text-contentError">
-                      {editablePlan.days.length > 1 ? "D1:1" : "1"}
-                    </span>
-                  </div>
-                  <span>W planie</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span
-                    className="map-marker__dot map-marker__dot--legend"
-                    aria-hidden="true"
-                  />
-                  <span>Dostępne</span>
-                </div>
-              </div>
             </div>
+
+            <DayTabs
+              days={dayTabsData}
+              selectedIndex={selectedDayIndex}
+              onSelect={setSelectedDayIndex}
+              dragOverDayIndex={dnd.dragOverDayIndex}
+            />
+
+            <div className="px-4 pb-4">
+              <Button
+                outline
+                onClick={dayManagement.handleAddDay}
+                className="flex w-full items-center justify-center gap-2"
+              >
+                <PlusIcon className="h-4 w-4" />
+                Dodaj dzień
+              </Button>
+            </div>
+          </aside>
+
+          <section className="max-w-xl w-full overflow-y-auto">
+            <PlanAlerts
+              planId={plan.id}
+              hasModifications={hasModifications}
+              className="mb-4"
+            />
+            <DayContainer
+              day={selectedDay}
+              onDetailsClick={placeDialog.handleDetailsClick}
+              onRemovePlace={placeDialog.handleRemovePlace}
+              onDeleteDay={
+                editablePlan.days.length > 1
+                  ? () => dayManagement.handleDeleteDayRequest(selectedDayIndex)
+                  : undefined
+              }
+            />
+          </section>
+
+          <section className="flex max-h-[calc(100vh-100px)] min-w-80 flex-1 flex-col gap-8">
+            <div className="flex items-center justify-end">{saveButton}</div>
+
+            <PlanMapPanel
+              mapCenter={mapCenter}
+              mapMarkers={mapMarkers}
+              onMarkerClick={placeDialog.handleMarkerClick}
+              multiDay={editablePlan.days.length > 1}
+              className="flex-1"
+            />
+          </section>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-4 pb-6">
+          <div className="flex items-start justify-between gap-3 px-4 pt-2">
+            <PlanHeaderSection
+              planId={plan.id}
+              editablePlan={editablePlan}
+              nameEditing={nameEditing}
+              className="min-w-0 flex-1"
+            />
+            {saveButton}
           </div>
-        </section>
 
-        {/* Dialog ze szczegółami miejsca */}
-        <PlaceDetailsDialog
-          place={placeForDialog}
-          open={isDialogOpen}
-          onClose={() => setIsDialogOpen(false)}
-          showAddToPlan={!isSelectedPlaceInPlan}
-          onAddToPlan={handleAddToPlan}
-        />
+          <div className="px-4">
+            <ExpandableCard title={selectedDayTitle} defaultOpen={false}>
+              <DayTabs
+                days={dayTabsData}
+                selectedIndex={selectedDayIndex}
+                onSelect={setSelectedDayIndex}
+                dragOverDayIndex={dnd.dragOverDayIndex}
+                className="p-0"
+              />
+              <Button
+                outline
+                onClick={dayManagement.handleAddDay}
+                className="mt-3 flex w-full items-center justify-center gap-2"
+              >
+                <PlusIcon className="h-4 w-4" />
+                Dodaj dzień
+              </Button>
+            </ExpandableCard>
+          </div>
 
-        {/* Dialog potwierdzenia usunięcia dnia */}
-        <Popup
-          open={isPopupOpen}
-          onClose={handleCancelDeleteDay}
-          onConfirm={handleConfirmDeleteDay}
-          title="Usunąć dzień z planu?"
-          description={`Czy na pewno chcesz usunąć Dzień ${dayToDeleteIndex !== null ? dayToDeleteIndex + 1 : ""} z planu? Tej operacji nie można cofnąć.`}
-          confirmText="Usuń"
-          cancelText="Anuluj"
-          variant="destructive"
-        />
-      </div>
+          <div className="px-4">
+            <Tabs>
+              <TabItem
+                current={mobileViewTab === "plan"}
+                onClick={() => setMobileViewTab("plan")}
+              >
+                Plan dnia
+              </TabItem>
+              <TabItem
+                current={mobileViewTab === "map"}
+                onClick={() => setMobileViewTab("map")}
+              >
+                Mapa
+              </TabItem>
+            </Tabs>
+          </div>
 
-      {/* Drag Overlay - podgląd przeciąganego elementu */}
-      <DragOverlay dropAnimation={dropAnimation}>
-        {activeDrag ? <PlaceCard place={activeDrag.place} isOverlay /> : null}
+          <div className="px-4">
+            {mobileViewTab === "plan" ? (
+              <>
+                <PlanAlerts
+                  planId={plan.id}
+                  hasModifications={hasModifications}
+                  className="mb-4"
+                />
+                <DayContainer
+                  day={selectedDay}
+                  onDetailsClick={placeDialog.handleDetailsClick}
+                  onRemovePlace={placeDialog.handleRemovePlace}
+                  onDeleteDay={
+                    editablePlan.days.length > 1
+                      ? () =>
+                          dayManagement.handleDeleteDayRequest(selectedDayIndex)
+                      : undefined
+                  }
+                />
+              </>
+            ) : (
+              <PlanMapPanel
+                mapCenter={mapCenter}
+                mapMarkers={mapMarkers}
+                onMarkerClick={placeDialog.handleMarkerClick}
+                multiDay={editablePlan.days.length > 1}
+                className="h-[55vh] min-h-[320px]"
+              />
+            )}
+          </div>
+        </div>
+      )}
+
+      <PlaceDetailsDialog
+        place={placeDialog.placeForDialog}
+        open={placeDialog.isDialogOpen}
+        onClose={() => placeDialog.setIsDialogOpen(false)}
+        showAddToPlan={!placeDialog.isSelectedPlaceInPlan}
+        onAddToPlan={placeDialog.handleAddToPlan}
+      />
+
+      <Popup
+        open={dayManagement.isPopupOpen}
+        onClose={dayManagement.handleCancelDeleteDay}
+        onConfirm={dayManagement.handleConfirmDeleteDay}
+        title="Usunąć dzień z planu?"
+        description={`Czy na pewno chcesz usunąć Dzień ${dayManagement.dayToDeleteIndex !== null ? dayManagement.dayToDeleteIndex + 1 : ""} z planu? Tej operacji nie można cofnąć.`}
+        confirmText="Usuń"
+        cancelText="Anuluj"
+        variant="destructive"
+      />
+
+      <DragOverlay dropAnimation={dnd.dropAnimation}>
+        {dnd.activeDrag ? (
+          <PlaceCard place={dnd.activeDrag.place} isOverlay />
+        ) : null}
       </DragOverlay>
     </DndContext>
   );

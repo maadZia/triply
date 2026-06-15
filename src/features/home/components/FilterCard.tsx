@@ -29,7 +29,7 @@ import {
   PLACE_TYPE_LABELS,
 } from "@/types/places";
 import type { PlanFilters } from "@/types/plan";
-import { useGeneratedPlan } from "@/context/GeneratedPlanContext";
+import { useGeneratedPlan } from "@/context/plan/GeneratedPlanContext";
 import { GeneratingModal } from "@/features/home/components/GeneratingModal";
 import { validateFilters } from "@/utils/planGenerator";
 import { getUniqueCities } from "@/mock/places";
