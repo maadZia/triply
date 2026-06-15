@@ -156,7 +156,7 @@ function PlaceDetailsContent({
             {/* Rating */}
             {place.rating && (
               <div className="flex items-center gap-2">
-                <StarIcon className="h-5 w-5 text-accentBase fill-accentBase" />
+                <StarIcon className="h-5 w-5 text-amber-500 fill-amber-500" />
                 <P3 className="font-semibold text-contentPrimary">
                   {place.rating.score}
                 </P3>
