@@ -14,6 +14,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import PrivacyPolicyPage from "@/pages/legal/PrivacyPolicyPage";
 import { useAuth } from "@/auth/AuthContext";
 import { LoadingDots } from "@/components/design-system/atoms/LoadingDots";
+import TermsAndConditionsPage from "@/pages/legal/TermsAndConditions";
 
 function App() {
   const { loading } = useAuth();
@@ -38,6 +39,10 @@ function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+              <Route
+                path="/terms-and-conditions"
+                element={<TermsAndConditionsPage />}
+              />
 
               {/* Protected routes — require authentication */}
               <Route element={<ProtectedRoute />}>
