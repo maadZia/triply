@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainLayout from "@/layout";
+import { ScrollToTop } from "@/components/ScrollToTop";
 import HomePage from "@/pages/HomePage";
 import ExplorePage from "@/pages/explore/ExplorePage";
 import SchedulePage from "@/pages/schedule/SchedulePage";
@@ -9,7 +10,7 @@ import LoginPage from "@/pages/auth/LoginPage";
 import RegisterPage from "@/pages/auth/RegisterPage";
 import { GeneratedPlanProvider } from "@/context/plan/GeneratedPlanProvider";
 import { ToastProvider } from "@/context/toast/ToastProvider";
-import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import PrivacyPolicyPage from "@/pages/legal/PrivacyPolicyPage";
 import { useAuth } from "@/auth/AuthContext";
 import { LoadingDots } from "@/components/design-system/atoms/LoadingDots";
@@ -26,6 +27,7 @@ function App() {
   }
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <ToastProvider>
         <GeneratedPlanProvider>
           <Routes>
