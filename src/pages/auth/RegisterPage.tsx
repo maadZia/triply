@@ -201,7 +201,10 @@ export default function RegisterPage() {
 
           <p className="text-[11px] text-contentSecondary text-center px-2">
             Rejestrując się, akceptujesz nasz{" "}
-            <a className="text-accentDark font-semibold" href="/privacy-policy">
+            <a
+              className="text-accentDark font-semibold"
+              href="/terms-and-conditions"
+            >
               Regulamin
             </a>{" "}
             oraz{" "}
