@@ -4,7 +4,7 @@ import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface ExpandableCardProps {
-  title: string;
+  title: React.ReactNode;
   defaultOpen?: boolean;
   children?: React.ReactNode;
   className?: string;
@@ -29,11 +29,11 @@ export function ExpandableCard({
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center justify-between px-6 py-4 hover:bg-backgroundSecondary/80 transition-colors"
+        className="flex w-full items-center justify-between px-6 py-4"
       >
-        <span className="text-lg font-semibold text-contentPrimary">
+        <div className="flex items-center gap-2.5 text-lg font-semibold text-contentPrimary">
           {title}
-        </span>
+        </div>
         {open ? (
           <ChevronUpIcon className="h-5 w-5 text-contentSecondary" />
         ) : (

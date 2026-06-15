@@ -3,7 +3,7 @@ import { DarkCard } from "@/components/design-system/cards/DarkCard";
 import { H1, H2 } from "@/components/design-system/typography/Heading";
 import { P1 } from "@/components/design-system/typography/Paragraph";
 import { Divider } from "@/components/design-system/atoms/Divider";
-import { Fieldset, Field } from "@/components/design-system/forms/Fieldset.tsx";
+import { Fieldset, Field } from "@/components/design-system/forms/Fieldset";
 import { Label } from "@/components/design-system/typography/Label";
 import { Input } from "@/components/design-system/forms/Input";
 import { Button } from "@/components/design-system/atoms/Button";
