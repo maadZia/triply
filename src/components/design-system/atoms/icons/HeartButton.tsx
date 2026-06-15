@@ -2,6 +2,8 @@ import { useState } from "react";
 import { HeartIcon as HeartOutline } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartSolid } from "@heroicons/react/24/solid";
 import { cn } from "@/components/utils";
+import { useAuth } from "@/auth/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 type HeartButtonProps = {
   onToggle?: (clicked: boolean) => void;
@@ -14,11 +16,15 @@ export function HeartButton({
   defaultLiked = false,
   className,
 }: HeartButtonProps) {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [clicked, setClicked] = useState<boolean>(defaultLiked);
 
   const handleClick = () => {
     const newState = !clicked;
     setClicked(newState);
+
+    if (!user) navigate("/login");
 
     if (onToggle) {
       onToggle(newState);

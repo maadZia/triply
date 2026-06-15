@@ -1,4 +1,6 @@
 import { Button } from "@/components/design-system/atoms/Button";
+import { useAuth } from "@/auth/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 interface FilterCardActionsProps {
   onSavePreferences: () => void;
@@ -13,6 +15,17 @@ export function FilterCardActions({
   isGenerating,
   canSavePreferences,
 }: FilterCardActionsProps) {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const handleGenerate = () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    onGenerate();
+  };
+
   return (
     <section className="mt-8 flex w-full justify-center gap-4">
       <Button
@@ -22,7 +35,7 @@ export function FilterCardActions({
       >
         Zapisz preferencje
       </Button>
-      <Button onClick={onGenerate} disabled={isGenerating}>
+      <Button onClick={handleGenerate} disabled={isGenerating}>
         {isGenerating ? "Generowanie..." : "Generuj plan"}
       </Button>
     </section>

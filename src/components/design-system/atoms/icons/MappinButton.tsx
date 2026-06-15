@@ -2,6 +2,8 @@ import { useState } from "react";
 import { MapPinIcon as MapPinSolid } from "@heroicons/react/24/solid";
 import { MapPinIcon as MapPinOutline } from "@heroicons/react/24/outline";
 import { cn } from "@/components/utils";
+import { useAuth } from "@/auth/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 type MappinButtonProps = {
   onToggle?: (clicked: boolean) => void;
@@ -14,11 +16,15 @@ export function MappinButton({
   defaultLiked = false,
   className,
 }: MappinButtonProps) {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [clicked, setClicked] = useState<boolean>(defaultLiked);
 
   const handleClick = () => {
     const newState = !clicked;
     setClicked(newState);
+
+    if (!user) navigate("/login");
 
     if (onToggle) {
       onToggle(newState);
